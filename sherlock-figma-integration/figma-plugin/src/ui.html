@@ -674,7 +674,7 @@
       // Check if it's an external URL that needs proxying
       if (originalUrl && (originalUrl.includes('sherlock-files.ams3.digitaloceanspaces.com') || 
           originalUrl.startsWith('https://') && !originalUrl.includes(window.location.hostname))) {
-        const apiHost = 'https://f173598a-dcb4-40b5-8a0e-65f88fad175c-00-pbhu69zimlaw.riker.replit.dev';
+        const apiHost = 'https://YOUR-PROJECT-NAME.replit.app';
         return `${apiHost}/api/proxy-image?url=${encodeURIComponent(originalUrl)}`;
       }
       return originalUrl;
@@ -702,7 +702,7 @@
 
     async function getApiHost() {
       const endpoints = [
-        'https://f173598a-dcb4-40b5-8a0e-65f88fad175c-00-pbhu69zimlaw.riker.replit.dev',
+        'https://YOUR-PROJECT-NAME.replit.app',
         'http://localhost:5000'
       ];
       
@@ -822,7 +822,7 @@
         console.log('🔍 Starting logo load...');
         
         // Hardcode the working endpoint for now
-        const apiHost = 'https://f173598a-dcb4-40b5-8a0e-65f88fad175c-00-pbhu69zimlaw.riker.replit.dev';
+        const apiHost = 'https://YOUR-PROJECT-NAME.replit.app';
         console.log('🔗 Using API host:', apiHost);
         
         const response = await fetch(`${apiHost}/api/logos`, {
