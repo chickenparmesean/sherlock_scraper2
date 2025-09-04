@@ -226,18 +226,6 @@
     <p>Automated slides with Sherlock data</p>
   </div>
 
-  <!-- Template Setup -->
-  <div class="section">
-    <h2>📋 Template Setup</h2>
-    
-    <div id="templateInfo" class="template-info hidden">
-      Template: <span class="template-name" id="templateName">None selected</span>
-    </div>
-    
-    <div class="button-row">
-      <button class="btn btn-secondary" onclick="setTemplate()">Set Template</button>
-      <button class="btn btn-secondary" onclick="analyzeTemplate()">Analyze</button>
-    </div>
     
     <div id="templateAnalysis" class="hidden"></div>
   </div>
@@ -330,13 +318,6 @@
       const { type, data, message } = event.data.pluginMessage || {};
 
       switch (type) {
-        case 'template-set':
-          handleTemplateSet(data);
-          break;
-          
-        case 'template-analysis':
-          handleTemplateAnalysis(data);
-          break;
           
         case 'slide-progress':
           handleSlideProgress(data);
@@ -346,9 +327,6 @@
           handleSlideGenerated(data);
           break;
 
-        case 'text-layer-debug':
-          handleTextLayerDebug(data);
-          break;
           
         case 'error':
           showStatus(message, 'error');

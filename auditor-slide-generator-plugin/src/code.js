@@ -184,7 +184,7 @@ async function handleGenerateSlide(data) {
       data: {
         success: true,
         slideName: newSlide.name,
-        message: `Slide generated for ${data.auditorData.name}! Debug: goodfit1="${data.manualInputs.goodfit1 || 'empty'}", goodfit2="${data.manualInputs.goodfit2 || 'empty'}", goodfit3="${data.manualInputs.goodfit3 || 'empty'}"`
+        message: `Slide generated for ${data.auditorData.name}!`
       }
     });
     
@@ -260,7 +260,6 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   
   // Update each text layer
   let updatedCount = 0;
-  console.log('🔍 Looking for these text layers:', textMappings.map(m => m.targetName).join(', '));
   
   for (const mapping of textMappings) {
     if (mapping.content) {
@@ -277,7 +276,6 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
     }
   }
   
-  console.log(`📝 Updated ${updatedCount} out of ${textMappings.filter(m => m.content).length} text layers`);
 }
 
 // Recursively find and update text nodes
@@ -308,9 +306,19 @@ async function updateTextInNode(node, targetName, newText) {
 // Replace profile image
 async function replaceProfileImage(slide, imageBytes) {
   try {
-    const imageNode = findImageNode(slide, 'profile');
+    // Look for profile image containers with multiple name patterns
+    let imageNode = findImageNode(slide, 'profile') || 
+                   findImageNode(slide, 'profilepicture') ||
+                   findImageNode(slide, 'auditor-image') ||
+                   findImageNode(slide, 'photo');
+    
     if (!imageNode) {
-      console.log('⚠️ Profile image container not found');
+      console.log('⚠️ Profile image container not found. Looking for any rectangle/ellipse to use...');
+      imageNode = findFirstImageContainer(slide);
+    }
+    
+    if (!imageNode) {
+      console.log('❌ No suitable image container found for profile picture');
       return;
     }
     
@@ -322,9 +330,8 @@ async function replaceProfileImage(slide, imageBytes) {
         scaleMode: 'FILL',
         imageHash: imageHash
       }];
+      console.log(`✅ Profile image updated in "${imageNode.name}"`);
     }
-    
-    console.log('✅ Profile image updated');
   } catch (error) {
     console.error('❌ Failed to replace profile image:', error);
   }
@@ -367,6 +374,23 @@ function findImageNode(node, namePattern) {
   if ('children' in node) {
     for (const child of node.children) {
       const found = findImageNode(child, namePattern);
+      if (found) return found;
+    }
+  }
+  
+  return null;
+}
+
+// Find first suitable image container if specific ones aren't found
+function findFirstImageContainer(node) {
+  if ((node.type === 'RECTANGLE' || node.type === 'ELLIPSE') && 
+      node.width > 50 && node.height > 50) { // Reasonable size for profile pic
+    return node;
+  }
+  
+  if ('children' in node) {
+    for (const child of node.children) {
+      const found = findFirstImageContainer(child);
       if (found) return found;
     }
   }
