@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-// Temporarily use mock data until scraper compilation is fixed
-// TODO: Re-enable real scraper once TypeScript imports are resolved
+// Use working REAL scraper that actually scrapes Sherlock data
+const { RealSherlockScraper } = require('./real-sherlock-scraper.js');
 
 const app = express();
 const PORT = 5000;
@@ -30,8 +30,11 @@ app.use((req, res, next) => {
   }
 });
 
-console.log('🚀 Server starting with enhanced mock data...');
-console.log('✅ Logo API active, real scraper integration pending');
+// Initialize your REAL scraper
+const scraper = new RealSherlockScraper();
+
+console.log('🚀 Server starting with REAL Sherlock scraper...');
+console.log('✅ Logo API + REAL profile scraping both active');
 
 // API endpoint to scrape single profile (GET for plugin compatibility)
 app.get('/api/scrape-profile', async (req, res) => {
@@ -44,22 +47,8 @@ app.get('/api/scrape-profile', async (req, res) => {
 
     console.log(`🔍 API request to scrape: ${url}`);
     
-    // Extract username from URL for better mock data
-    const username = url.split('/watson/')[1] || url.split('/').pop() || "Unknown";
-    
-    // Enhanced mock data with real profile image URLs and better data
-    const profile = {
-      name: username,
-      profileImageUrl: `https://avatars.githubusercontent.com/u/${Math.abs(username.split('').reduce((a, b) => a + b.charCodeAt(0), 0))}?v=4`,
-      achievements: {
-        rankings: `Expert security researcher with proven track record`,
-        earnings: `$${Math.floor(Math.random() * 300 + 150)}K+ earned in audits`,
-        highsFound: Math.floor(Math.random() * 20 + 10),
-        mediumsFound: Math.floor(Math.random() * 15 + 8),
-        soloHighs: Math.floor(Math.random() * 8 + 2),
-        soloMediums: Math.floor(Math.random() * 6 + 1)
-      }
-    };
+    // Use YOUR REAL scraper to get actual profile data from Sherlock
+    const profile = await scraper.scrapeProfile(url);
     
     if (!profile) {
       return res.status(404).json({
@@ -93,19 +82,9 @@ app.post('/api/scrape-profile', async (req, res) => {
 
     console.log(`🔍 API request to scrape: ${username}`);
     
-    // Enhanced mock data with GitHub profile images
-    const profile = {
-      name: username,
-      profileImageUrl: `https://avatars.githubusercontent.com/u/${Math.abs(username.split('').reduce((a, b) => a + b.charCodeAt(0), 0))}?v=4`,
-      achievements: {
-        rankings: `Leading auditor in ${username} specialization`,
-        earnings: `$${Math.floor(Math.random() * 250 + 120)}K+ earned in audits`,
-        highsFound: Math.floor(Math.random() * 18 + 12),
-        mediumsFound: Math.floor(Math.random() * 12 + 6),
-        soloHighs: Math.floor(Math.random() * 7 + 3),
-        soloMediums: Math.floor(Math.random() * 5 + 2)
-      }
-    };
+    // Build full URL for your REAL scraper
+    const fullUrl = `https://audits.sherlock.xyz/watson/${username}`;
+    const profile = await scraper.scrapeProfile(fullUrl);
     
     if (!profile) {
       return res.status(404).json({
