@@ -279,31 +279,48 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   
   console.log(`📝 Updated ${updatedCount} out of ${textMappings.filter(m => m.content).length} text layers`);
   
-  // Send debug info to UI
+  // Collect which updates succeeded vs failed
+  const successfulUpdates = [];
+  const failedUpdates = [];
+  
+  for (const mapping of textMappings) {
+    if (mapping.content) {
+      const updated = await updateTextInNode(slide, mapping.targetName, mapping.content, true); // silent check
+      if (updated) {
+        successfulUpdates.push(mapping.targetName);
+      } else {
+        failedUpdates.push(mapping.targetName);
+      }
+    }
+  }
+  
+  // Send detailed debug info to UI
   figma.ui.postMessage({
-    type: 'text-layer-debug',
+    type: 'text-layer-debug', 
     data: {
       goodfit1: manualInputs.goodfit1,
-      goodfit2: manualInputs.goodfit2, 
+      goodfit2: manualInputs.goodfit2,
       goodfit3: manualInputs.goodfit3,
-      layersFound: textMappings.map(m => m.targetName).join(', '),
-      updatesCount: updatedCount
+      successfulUpdates: successfulUpdates.join(', '),
+      failedUpdates: failedUpdates.join(', '),
+      updatesCount: successfulUpdates.length
     }
   });
 }
 
-// Recursively find and update text nodes
-async function updateTextInNode(node, targetName, newText) {
-  console.log(`🔍 Checking node: "${node.name}" (type: ${node.type}) for target: "${targetName}"`);
+// Recursively find and update text nodes  
+async function updateTextInNode(node, targetName, newText, silent = false) {
+  if (!silent) console.log(`🔍 Checking node: "${node.name}" (type: ${node.type}) for target: "${targetName}"`);
   
   if (node.type === 'TEXT' && node.name.toLowerCase().includes(targetName.toLowerCase())) {
-    console.log(`🎯 MATCH found! Updating "${node.name}" with: "${newText}"`);
+    if (!silent) console.log(`🎯 MATCH found! Updating "${node.name}" with: "${newText}"`);
     try {
       await figma.loadFontAsync(node.fontName);
       node.characters = newText;
       return true;
     } catch (error) {
-      console.error(`❌ Failed to update text "${targetName}":`, error);
+      if (!silent) console.error(`❌ Failed to update text "${targetName}":`, error.message);
+      return false;
     }
   }
   
