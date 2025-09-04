@@ -111,7 +111,17 @@ function handleAnalyzeTemplate() {
 
 // Main slide generation orchestrator
 async function handleGenerateSlide(data) {
+  console.log('🎯 Starting slide generation with data:', data);
   try {
+    // Validate input data
+    if (!data || !data.auditorData || !data.auditorData.name) {
+      throw new Error('Missing auditor data. Please fetch auditor data first.');
+    }
+    
+    if (!data.protocolName) {
+      throw new Error('Missing protocol name. Please enter a protocol name.');
+    }
+    
     // Validate template
     if (!currentTemplate) {
       currentTemplate = findTemplateFrame();
@@ -119,6 +129,8 @@ async function handleGenerateSlide(data) {
         throw new Error('No template frame found. Please select a frame first.');
       }
     }
+    
+    console.log('✅ Template found:', currentTemplate.name);
     
     figma.ui.postMessage({ 
       type: 'slide-progress', 

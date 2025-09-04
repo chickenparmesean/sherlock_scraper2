@@ -479,11 +479,14 @@
     }
 
     function handleSlideGenerated(data) {
+      console.log('📋 Slide generation completed:', data);
+      
       if (data.success) {
-        showStatus(data.message, 'success');
+        showStatus(`✅ ${data.message}`, 'success');
         showProgress(100);
       } else {
-        showStatus(`Generation failed: ${data.error}`, 'error');
+        showStatus(`❌ Slide generation failed: ${data.error}`, 'error');
+        console.error('Slide generation error:', data.error);
         hideProgress();
       }
       
