@@ -235,46 +235,6 @@ async function placeLogosInSlide(slide, selectedLogos) {
             imageHash: imageHash
           }];
           console.log(`✅ Placed logo "${logo.name}" in ${container.type} "${container.name}"`);
-        } else if (container.type === 'IMAGE') {
-          // For actual IMAGE nodes, replace the image entirely
-          try {
-            const newImage = figma.createNodeFromSvg(`<svg width="${container.width}" height="${container.height}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="white"/></svg>`);
-            newImage.x = container.x;
-            newImage.y = container.y;
-            newImage.name = container.name;
-            
-            // Apply the logo image
-            if (newImage.type === 'FRAME' && newImage.children.length > 0) {
-              const shape = newImage.children[0];
-              if (shape.type === 'RECTANGLE') {
-                shape.fills = [{
-                  type: 'IMAGE',
-                  scaleMode: 'FIT',
-                  imageHash: imageHash
-                }];
-              }
-            }
-            
-            // Replace the old image
-            const parent = container.parent;
-            const index = parent.children.indexOf(container);
-            container.remove();
-            parent.insertChild(index, newImage);
-            
-            console.log(`✅ Replaced IMAGE node "${logo.name}" with new logo`);
-          } catch (imageReplaceError) {
-            console.log(`⚠️ IMAGE replacement failed, trying parent frame approach for "${container.name}"`);
-            // Fallback: try to place in parent frame
-            const parentFrame = container.parent;
-            if (parentFrame && (parentFrame.type === 'FRAME' || parentFrame.type === 'RECTANGLE')) {
-              parentFrame.fills = [{
-                type: 'IMAGE',
-                scaleMode: 'FIT',
-                imageHash: imageHash
-              }];
-              console.log(`✅ Placed logo "${logo.name}" in parent frame "${parentFrame.name}"`);
-            }
-          }
         } else if (container.type === 'FRAME' || container.type === 'GROUP') {
           // For frames/groups, try to find a child rectangle/ellipse to place the image
           const childShape = findFirstImageContainer(container);
@@ -340,10 +300,19 @@ function findLogoContainers(slide, maxCount) {
   function searchForLogos(node) {
     if (containers.length >= maxCount) return;
     
-    if (node.name && node.name.toLowerCase().includes('logo')) {
-      // Support shapes, containers, AND actual IMAGE nodes
-      if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || 
-          node.type === 'FRAME' || node.type === 'GROUP' || node.type === 'IMAGE') {
+    if (node.name) {
+      const nodeName = node.name.toLowerCase();
+      // Look for logo containers by name patterns
+      const isLogoContainer = nodeName.includes('logo') || 
+                             nodeName.includes('frame1') || 
+                             nodeName.includes('frame2') || 
+                             nodeName.includes('frame3') ||
+                             nodeName === 'frame1' ||
+                             nodeName === 'frame2' ||
+                             nodeName === 'frame3';
+      
+      if (isLogoContainer && (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || 
+          node.type === 'FRAME' || node.type === 'GROUP')) {
         containers.push(node);
         console.log(`🎯 Found logo container: "${node.name}" (${node.type})`);
       }
