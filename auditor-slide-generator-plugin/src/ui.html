@@ -417,7 +417,8 @@
             console.error('❌ Failed to fetch profile image:', error.message);
           }
         } else {
-          console.log('⚠️ No profile image URL found in auditor data', auditorData);
+          console.log('⚠️ No profile image URL found in auditor data');
+          console.log('🔍 Full auditor data received:', JSON.stringify(auditorData, null, 2));
         }
 
         // Collect manual inputs
