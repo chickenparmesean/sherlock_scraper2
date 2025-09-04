@@ -135,6 +135,7 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
     { targetName: 'goodfit-1', content: manualInputs.goodfit1 || '' },
     { targetName: 'goodfit-2', content: manualInputs.goodfit2 || '' },
     { targetName: 'goodfit-3', content: manualInputs.goodfit3 || '' },
+    { targetName: 'goodfit', content: `Why ${auditorData.name} is a good fit for ${protocolName}` },
     { targetName: 'title', content: `Why ${auditorData.name} Is a Great Fit for ${protocolName}?` },
     { targetName: 'slide-title', content: `Why ${auditorData.name} Is a Great Fit for ${protocolName}?` }
   ];
