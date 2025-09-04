@@ -9,7 +9,7 @@ Text,achievement-4,1:66,N/A,string,Manual - UI Input,User needs to input custom 
 Text,goodfit-1,1:15,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
 Text,goodfit-2,1:68,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
 Text,goodfit-3,1:70,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
-Text,"Why Deadroses Is a Great Fit for [PROTOCOL]?",1:18,N/A,string,Manual - UI Input,User needs to replace [PROTOCOL] with actual protocol name
+Text,"Why Deadroses Is a Great Fit for [PROTOCOL]?",1:18,N/A,string,Manual - UI Input,User needs to enter protocol being audited in UI. Change [PROTOCOL] with real protocol name
 Text,"Audited:",1:12,N/A,string,Static,Label text - likely no changes needed
 Text,"Achievements",1:13,N/A,string,Static,Label text - likely no changes needed
 Image,profilepicture,1:6,profile.profileImage,image_url,Auto - Scraper,Profile image from scraper
