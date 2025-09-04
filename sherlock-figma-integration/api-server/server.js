@@ -214,12 +214,19 @@ app.get('/api/logos', async (req, res) => {
 // Get available signatures from GitHub repository
 app.get('/api/signatures', async (req, res) => {
   try {
+    if (!process.env.GITHUB_TOKEN) {
+      return res.status(500).json({
+        error: 'GitHub token not configured'
+      });
+    }
+
     console.log('📁 Fetching signatures from GitHub repo:', `${REPO_OWNER}/${REPO_NAME}/${SIGNATURES_PATH}`);
     
     const response = await fetch(
       `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SIGNATURES_PATH}`,
       {
         headers: {
+          'Authorization': `token ${process.env.GITHUB_TOKEN}`,
           'Accept': 'application/vnd.github.v3+json',
           'User-Agent': 'Sherlock-Figma-Plugin'
         }
