@@ -13,9 +13,11 @@
     "allowedDomains": [
       "https://audits.sherlock.xyz",
       "https://sherlock-files.ams3.digitaloceanspaces.com",
-      "http://localhost:5000",
       "*.replit.dev",
       "*.repl.co"
+    ],
+    "devAllowedDomains": [
+      "http://localhost:5000"
     ]
   }
 }
