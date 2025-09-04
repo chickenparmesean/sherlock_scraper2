@@ -217,10 +217,10 @@ async function duplicateTemplateFrame(template, protocolName, auditorName) {
 async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolName) {
   // Build vulnerabilities summary
   const vulnParts = [];
-  if (auditorData.achievements?.highsFound) vulnParts.push(`${auditorData.achievements.highsFound} highs found`);
-  if (auditorData.achievements?.soloHighs) vulnParts.push(`${auditorData.achievements.soloHighs} solo highs found`);
-  if (auditorData.achievements?.mediumsFound) vulnParts.push(`${auditorData.achievements.mediumsFound} mediums found`);
-  if (auditorData.achievements?.soloMediums) vulnParts.push(`${auditorData.achievements.soloMediums} solo mediums found`);
+  if (auditorData.achievements && auditorData.achievements.highsFound) vulnParts.push(`${auditorData.achievements.highsFound} highs found`);
+  if (auditorData.achievements && auditorData.achievements.soloHighs) vulnParts.push(`${auditorData.achievements.soloHighs} solo highs found`);
+  if (auditorData.achievements && auditorData.achievements.mediumsFound) vulnParts.push(`${auditorData.achievements.mediumsFound} mediums found`);
+  if (auditorData.achievements && auditorData.achievements.soloMediums) vulnParts.push(`${auditorData.achievements.soloMediums} solo mediums found`);
   const vulnerabilitiesSummary = vulnParts.join(', ');
   
   // Text mapping based on layer names
@@ -228,8 +228,8 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
     { targetName: 'auditor-name', content: auditorData.name },
     { targetName: 'subheading', content: manualInputs.subheading || '' },
     { targetName: 'description', content: manualInputs.description || '' },
-    { targetName: 'achievement-1', content: auditorData.achievements?.rankings || '' },
-    { targetName: 'achievement-2', content: auditorData.achievements?.earnings || '' },
+    { targetName: 'achievement-1', content: auditorData.achievements && auditorData.achievements.rankings || '' },
+    { targetName: 'achievement-2', content: auditorData.achievements && auditorData.achievements.earnings || '' },
     { targetName: 'achievement-3', content: vulnerabilitiesSummary },
     { targetName: 'achievement-4', content: manualInputs.achievement4 || '' },
     { targetName: 'goodfit-1', content: manualInputs.goodfit1 || '' },
