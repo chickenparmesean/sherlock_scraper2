@@ -18,6 +18,7 @@
     ],
     "devAllowedDomains": [
       "http://localhost:5000"
-    ]
+    ],
+    "reasoning": "This plugin needs network access to fetch auditor profile data from Sherlock Protocol API and download profile images for automated slide generation."
   }
 }
