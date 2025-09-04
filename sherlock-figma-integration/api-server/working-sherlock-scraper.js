@@ -25,28 +25,73 @@ class WorkingSherlockScraper {
       const urlMatch = sherlockUrl.match(/\/watson\/([^\/]+)\/?$/);
       const username = urlMatch ? decodeURIComponent(urlMatch[1]) : 'Unknown';
       
-      // Find profile image - try multiple selectors
+      // Find profile image - prioritize actual profile pics over banners
       let profileImageUrl = '';
-      const imageSelectors = [
-        'img[alt*="profile" i]',
-        'img[src*="profile" i]', 
-        'img[src*="avatar" i]',
-        'img[src*="_next/image"]'
-      ];
       
-      for (const selector of imageSelectors) {
-        const imgElement = $(selector).first();
-        if (imgElement.length > 0) {
-          let src = imgElement.attr('src');
+      // Strategy 1: Look for images from twitter_images (most reliable)
+      $('img[src*="twitter_images"]').each((i, elem) => {
+        const $img = $(elem);
+        const alt = $img.attr('alt') || '';
+        const dataNimg = $img.attr('data-nimg') || '';
+        
+        // Skip banner images
+        if (alt.toLowerCase() !== 'banner' && dataNimg !== 'fill') {
+          let src = $img.attr('src');
           if (src) {
             if (src.startsWith('/')) {
               src = 'https://audits.sherlock.xyz' + src;
             }
             profileImageUrl = src;
-            console.log(`✅ Found profile image: ${src}`);
-            break;
+            console.log(`✅ Found profile image from twitter_images: ${src}`);
+            return false; // break out of each loop
           }
         }
+      });
+      
+      // Strategy 2: If no twitter_images, look for profile pics with dimensions
+      if (!profileImageUrl) {
+        $('img[width][height]').each((i, elem) => {
+          const $img = $(elem);
+          const alt = $img.attr('alt') || '';
+          const dataNimg = $img.attr('data-nimg') || '';
+          const src = $img.attr('src') || '';
+          
+          // Skip banner images and look for reasonable profile pic dimensions
+          if (alt.toLowerCase() !== 'banner' && 
+              dataNimg === '1' && 
+              src.includes('_next/image')) {
+            
+            let imageSrc = src;
+            if (imageSrc.startsWith('/')) {
+              imageSrc = 'https://audits.sherlock.xyz' + imageSrc;
+            }
+            profileImageUrl = imageSrc;
+            console.log(`✅ Found profile image with dimensions: ${imageSrc}`);
+            return false; // break out of each loop
+          }
+        });
+      }
+      
+      // Strategy 3: Fallback to any non-banner image
+      if (!profileImageUrl) {
+        $('img[src*="_next/image"]').each((i, elem) => {
+          const $img = $(elem);
+          const alt = $img.attr('alt') || '';
+          const dataNimg = $img.attr('data-nimg') || '';
+          
+          // Exclude banner and fill images
+          if (alt.toLowerCase() !== 'banner' && dataNimg !== 'fill') {
+            let src = $img.attr('src');
+            if (src) {
+              if (src.startsWith('/')) {
+                src = 'https://audits.sherlock.xyz' + src;
+              }
+              profileImageUrl = src;
+              console.log(`✅ Found profile image (fallback): ${src}`);
+              return false; // break out of each loop
+            }
+          }
+        });
       }
 
       // Extract achievements using the working logic from your GitHub repo
