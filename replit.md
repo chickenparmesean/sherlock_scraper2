@@ -26,10 +26,13 @@ The application follows a modular, dual-approach architecture for robust data ex
 - Number of solo highs and solo mediums found
 
 **Figma Integration Architecture**: 
-- `FigmaClient` class providing comprehensive Figma API integration
-- Template-based slide duplication (creates new copies, never modifies originals) 
-- Text layer updates and image replacement capabilities
-- File structure analysis for identifying updateable elements
+- **Dual Approach**: REST API client for testing + Plugin API for full slide generation
+- `FigmaClient` class for template analysis and connection testing (REST API)
+- **Figma Plugin** (`figma-plugin/`) for complete slide generation with write permissions
+- Template frame duplication within same file (Plugin API only)
+- Smart text layer mapping using naming conventions
+- Profile image replacement with automatic fetching
+- Template structure analysis for setup and debugging
 
 **Fallback Architecture**: The system gracefully degrades from Puppeteer to simple HTTP requests when browser automation is unavailable.
 
@@ -51,15 +54,19 @@ The application follows a modular, dual-approach architecture for robust data ex
 
 ### File Structure
 
-**Source Organization**: All source code is organized in the `src/` directory:
-- `src/sherlock-scraper.ts`: Advanced Puppeteer-based scraper with TypeScript
-- `src/figma-client.ts`: Comprehensive Figma API client for slide generation
-- `src/figma-test.ts`: Figma integration testing and demonstration utilities
-- `src/image-utils.ts`: Image processing and conversion utilities
-- `src/config.ts`: Configuration management and constants
-- `src/types.ts`: TypeScript interface definitions
-- `src/server.js`: Express web server with API endpoints for both scraping and Figma
-- `src/public/index.html`: Web UI for testing scraper and Figma integration
+**Source Organization**: 
+- **Main Application** (`src/`): Express server providing Sherlock scraper API
+  - `src/sherlock-scraper.ts`: Advanced Puppeteer-based scraper with TypeScript
+  - `src/figma-client.ts`: Figma REST API client for testing and analysis
+  - `src/server.js`: Express web server with scraper API endpoints
+  - `src/public/index.html`: Web UI for testing scraper functionality
+  - `src/types.ts`: TypeScript interface definitions
+
+- **Figma Plugin** (`figma-plugin/`): Complete plugin for slide generation
+  - `figma-plugin/manifest.json`: Plugin configuration with network access
+  - `figma-plugin/code.js`: Main plugin logic with slide generation
+  - `figma-plugin/ui.html`: Plugin UI panel with form inputs
+  - `figma-plugin/README.md`: Installation and usage instructions
 
 **Error Handling**: Comprehensive error handling with graceful fallbacks and sample data generation for testing purposes.
 
@@ -77,16 +84,27 @@ The application follows a modular, dual-approach architecture for robust data ex
 
 ## Recent Changes
 
-**September 04, 2025**: Successfully implemented Phase 1 of comprehensive Figma slide generation system:
+**September 04, 2025**: Successfully implemented complete Figma plugin approach after discovering REST API limitations:
 
-**Phase 1 - Figma Integration Completed:**
-- ✅ Figma API client with FIGMA_TOKEN authentication
-- ✅ File duplication functionality (duplicateFigmaFile) - creates new copies for each slide
-- ✅ Core functions: getFigmaFile(), findLayer(), updateText(), replaceImage()
-- ✅ Batch text updates with updateMultipleTexts()
-- ✅ File structure analysis for identifying text and image layers
-- ✅ Comprehensive web UI for testing Figma connectivity
-- ✅ API endpoints: /api/figma/test-connection, /api/figma/analyze-structure, /api/figma/create-slide
+**Figma Plugin Implementation Completed:**
+- ✅ Complete Figma plugin with full write permissions (bypasses REST API limitations)
+- ✅ Plugin structure: `manifest.json`, `code.js`, `ui.html` with proper network access configuration
+- ✅ Template frame duplication with timestamp-protocol-auditor naming convention
+- ✅ Smart text layer mapping using naming conventions (auditor-name, achievement-1, etc.)
+- ✅ Profile image replacement with Sherlock CDN integration
+- ✅ Template structure analysis for debugging and setup
+- ✅ Comprehensive plugin UI with auditor URL input and manual content fields
+- ✅ Full integration with Sherlock scraper API for automated data fetching
+- ✅ Error handling, progress tracking, and user feedback systems
+
+**Key Discovery**: Figma REST API is read-only and cannot duplicate files or create pages. Plugin API provides full write access needed for slide generation.
+
+**Plugin Features:**
+- Automatic auditor data fetching from Sherlock URLs
+- Template frame duplication within same file
+- Vulnerability summary generation (combines highs/mediums found with solo counts)
+- Manual content integration for custom descriptions and protocol-specific content
+- Professional slide naming: `[timestamp] [protocol] [auditor]` format
 
 **Enhanced Scraper Implementation (Previously Completed):**
 
@@ -124,16 +142,32 @@ The application follows a modular, dual-approach architecture for robust data ex
 
 The system now provides a complete Phase 1 implementation for automated Figma slide generation:
 
-**Current Capabilities:**
-- Full auditor profile data extraction from Sherlock Protocol
-- Figma template duplication and slide creation
-- Text layer identification and batch updates
-- Image container detection for future image replacement
-- Web interface for testing both scraping and Figma functionality
+**Production-Ready Implementation:**
 
-**Planned Development Phases:**
-- Phase 2: Database setup for protocol logo management
-- Phase 3: Advanced image processing and layout handling
-- Phase 4: Complete integration with UI for auditor selection and slide export
+**Sherlock Scraper API** (REST endpoints):
+- `/api/scrape-profile`: Fetch complete auditor data from Sherlock URLs
+- Vulnerability summary generation combining total + solo counts
+- Profile image extraction from Sherlock CDN
+- Full achievement data: rankings, earnings, statistics
 
-The foundation is production-ready for basic slide generation workflows with manual layer ID identification.
+**Figma Plugin** (Complete slide generation):
+- Template frame analysis and structure detection
+- Automated slide duplication with proper naming
+- Text layer updates using naming conventions
+- Profile image replacement with fetched images
+- Manual content integration for custom descriptions
+- Error handling and progress tracking
+
+**Usage Workflow:**
+1. Install Figma plugin from `figma-plugin/` directory
+2. Create slide template with properly named text layers
+3. Use plugin to fetch auditor data and generate professional slides
+4. Plugin combines Sherlock data with manual protocol-specific content
+
+**Future Enhancements:**
+- Logo database integration for protocol branding
+- Batch slide generation for multiple auditors
+- Advanced template customization and styling
+- Export automation to various formats
+
+The system provides a complete end-to-end solution for professional auditor slide generation.
