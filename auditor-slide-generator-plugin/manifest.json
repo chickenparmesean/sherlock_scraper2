@@ -7,14 +7,15 @@
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": [
-    "figma"
+    "figma",
+    "dev"
   ],
   "networkAccess": {
     "allowedDomains": [
-      "audits.sherlock.xyz",
-      "sherlock-files.ams3.digitaloceanspaces.com",
-      "*.replit.dev",
-      "*.repl.co"
+      "https://audits.sherlock.xyz",
+      "https://sherlock-files.ams3.digitaloceanspaces.com",
+      "https://*.replit.dev",
+      "https://*.repl.co"
     ],
     "devAllowedDomains": [
       "http://localhost:5000"
