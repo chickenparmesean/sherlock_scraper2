@@ -513,11 +513,17 @@
             const logoResponse = await fetch(logo.url);
             if (logoResponse.ok) {
               const logoBytes = new Uint8Array(await logoResponse.arrayBuffer());
+              
+              // Detect if this is an SVG file (iframe can use TextDecoder)
+              const logoText = new TextDecoder().decode(logoBytes.slice(0, 100));
+              const isSvg = logoText.includes('<svg') || logo.name.toLowerCase().endsWith('.svg');
+              
               logoImageBytes.push({
                 name: logo.name,
-                bytes: logoBytes
+                bytes: logoBytes,
+                isSvg: isSvg  // Pass SVG detection to main thread
               });
-              console.log(`✅ Logo fetched: ${logo.name}, bytes: ${logoBytes.length}`);
+              console.log(`✅ Logo fetched: ${logo.name}, bytes: ${logoBytes.length}, SVG: ${isSvg}`);
             } else {
               console.error(`❌ Failed to fetch logo ${logo.name}: ${logoResponse.status}`);
             }

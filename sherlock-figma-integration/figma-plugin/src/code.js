@@ -218,16 +218,14 @@ async function placeLogosInSlide(slide, selectedLogos) {
       
       try {
         // Use logo bytes provided by iframe (no more fetching needed)
-        console.log(`🔍 Placing logo: ${logo.name}, bytes: ${logo.bytes.length}`);
+        console.log(`🔍 Placing logo: ${logo.name}, bytes: ${logo.bytes.length}, SVG: ${logo.isSvg}`);
         
-        // Check if this is an SVG file (most protocol logos are SVGs)
-        const logoText = new TextDecoder().decode(logo.bytes.slice(0, 100));
-        const isSvg = logoText.includes('<svg') || logo.name.toLowerCase().endsWith('.svg');
-        
-        if (isSvg) {
+        if (logo.isSvg) {
           // Handle SVG files using createNodeFromSvg
           console.log(`📄 Logo is SVG, using createNodeFromSvg for: ${logo.name}`);
-          const svgString = new TextDecoder().decode(logo.bytes);
+          
+          // Convert bytes back to string for SVG processing
+          const svgString = String.fromCharCode.apply(null, logo.bytes);
           const svgNode = figma.createNodeFromSvg(svgString);
           
           // Position the SVG node over the container
