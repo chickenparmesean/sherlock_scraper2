@@ -152,6 +152,7 @@ const GITHUB_API_BASE = 'https://api.github.com';
 const REPO_OWNER = 'chickenparmesean';
 const REPO_NAME = 'sherlock_scraper2';
 const LOGOS_PATH = 'protocol-logo2';
+const SIGNATURES_PATH = 'signatures';
 
 // Get list of logos from GitHub repository
 app.get('/api/logos', async (req, res) => {
@@ -203,6 +204,54 @@ app.get('/api/logos', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching logos:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get available signatures from GitHub repository
+app.get('/api/signatures', async (req, res) => {
+  try {
+    console.log('📁 Fetching signatures from GitHub repo:', `${REPO_OWNER}/${REPO_NAME}/${SIGNATURES_PATH}`);
+    
+    const response = await fetch(
+      `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SIGNATURES_PATH}`,
+      {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Sherlock-Figma-Plugin'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`);
+    }
+
+    const files = await response.json();
+    
+    // Filter for PNG files and format for frontend
+    const signatures = files
+      .filter(file => file.type === 'file' && file.name.toLowerCase().endsWith('.png'))
+      .map(file => ({
+        name: file.name.replace('.png', ''), // Remove .png extension for display
+        fileName: file.name,
+        url: file.download_url
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    console.log(`✅ Found ${signatures.length} signatures in repository`);
+
+    res.json({
+      success: true,
+      signatures,
+      count: signatures.length
+    });
+
+  } catch (error) {
+    console.error('Error fetching signatures:', error.message);
     res.status(500).json({
       success: false,
       error: error.message

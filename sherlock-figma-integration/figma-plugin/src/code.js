@@ -49,6 +49,13 @@ async function generateSlideFromData(data) {
       });
     }
     
+    // Step 5: Handle signature (place or remove)
+    await handleSignatureInSlide(newSlide, data.selectedSignature);
+    figma.ui.postMessage({ 
+      type: 'slide-progress', 
+      data: { step: 'signature-handled' }
+    });
+    
     // Focus on new slide
     figma.viewport.scrollAndZoomIntoView([newSlide]);
     figma.currentPage.selection = [newSlide];
@@ -353,4 +360,44 @@ function findLogoContainers(slide, maxCount) {
   
   searchForLogos(slide);
   return containers.slice(0, maxCount);
+}
+
+// Handle signature placement or removal
+async function handleSignatureInSlide(slide, selectedSignature) {
+  try {
+    console.log(`🖋️ Handling signature: ${selectedSignature ? selectedSignature.name : 'No signature'}`);
+    
+    // Find signature element in slide
+    const signatureNode = findImageNode(slide, 'signature');
+    
+    if (!selectedSignature) {
+      // Remove signature element if no signature selected
+      if (signatureNode) {
+        console.log(`🗑️ Removing signature element`);
+        signatureNode.remove();
+        console.log(`✅ Signature element removed`);
+      } else {
+        console.log(`⚠️ No signature element found to remove`);
+      }
+      return;
+    }
+    
+    if (!signatureNode) {
+      console.log(`⚠️ No signature element found in template`);
+      return;
+    }
+    
+    // Place signature image
+    const imageHash = figma.createImage(selectedSignature.bytes).hash;
+    signatureNode.fills = [{
+      type: 'IMAGE',
+      scaleMode: 'FIT',
+      imageHash: imageHash
+    }];
+    
+    console.log(`✅ Signature "${selectedSignature.name}" placed in slide`);
+    
+  } catch (error) {
+    console.error('❌ Failed to handle signature:', error);
+  }
 }

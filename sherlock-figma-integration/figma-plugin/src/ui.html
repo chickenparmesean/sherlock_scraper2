@@ -285,6 +285,21 @@
     <button class="btn btn-secondary" onclick="testAuditorData()">Test Auditor Data</button>
   </div>
 
+  <!-- Auditor Signature -->
+  <div class="section">
+    <h2>✍️ Auditor Signature</h2>
+    
+    <div class="input-group">
+      <label for="signatureSelect">Signature</label>
+      <select id="signatureSelect">
+        <option value="">No signature</option>
+      </select>
+      <div class="field-help">Select auditor signature or choose "No signature" to remove signature element</div>
+    </div>
+    
+    <div id="signatureStatus" class="field-help">Loading signatures...</div>
+  </div>
+
   <!-- Protocol Logos -->
   <div class="section">
     <h2>🏢 Protocol Logos</h2>
@@ -546,6 +561,30 @@
           }
         }
 
+        // Get selected signature
+        const signatureSelect = document.getElementById('signatureSelect');
+        let selectedSignature = null;
+        if (signatureSelect.value) {
+          try {
+            selectedSignature = JSON.parse(signatureSelect.value);
+            
+            // Fetch signature image through proxy
+            console.log(`🖼️ Fetching signature: ${selectedSignature.name}`);
+            const signatureResponse = await fetch(`${API_HOST}/api/proxy-image?url=${encodeURIComponent(selectedSignature.url)}`);
+            if (signatureResponse.ok) {
+              const signatureBytes = new Uint8Array(await signatureResponse.arrayBuffer());
+              selectedSignature.bytes = signatureBytes;
+              console.log(`✅ Signature fetched: ${selectedSignature.name}, bytes: ${signatureBytes.length}`);
+            } else {
+              console.error(`❌ Failed to fetch signature: ${selectedSignature.name}`);
+              selectedSignature = null;
+            }
+          } catch (error) {
+            console.error('❌ Error processing signature:', error);
+            selectedSignature = null;
+          }
+        }
+
         // Send to main thread for slide generation
         postToMain({
           type: 'generate-slide',
@@ -556,7 +595,8 @@
             },
             manualInputs,
             protocolName,
-            selectedLogos: logoImageBytes  // Send bytes instead of URLs
+            selectedLogos: logoImageBytes,  // Send bytes instead of URLs
+            selectedSignature: selectedSignature  // Include signature data
           }
         });
 
@@ -967,9 +1007,49 @@
       });
     }
 
-    // Initialize logos when page loads
+    // Load signatures from GitHub repository
+    async function loadSignatures() {
+      try {
+        const apiHost = await getApiHost();
+        const response = await fetch(`${apiHost}/api/signatures`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load signatures: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to load signatures');
+        }
+        
+        const signatureSelect = document.getElementById('signatureSelect');
+        
+        // Clear existing options (keep "No signature" as first option)
+        signatureSelect.innerHTML = '<option value="">No signature</option>';
+        
+        // Add signature options
+        data.signatures.forEach(signature => {
+          const option = document.createElement('option');
+          option.value = JSON.stringify({name: signature.name, url: signature.url, fileName: signature.fileName});
+          option.textContent = signature.name;
+          signatureSelect.appendChild(option);
+        });
+        
+        document.getElementById('signatureStatus').textContent = 
+          `${data.signatures.length} signatures available`;
+          
+      } catch (error) {
+        console.error('❌ Failed to load signatures:', error);
+        document.getElementById('signatureStatus').textContent = 
+          `Error loading signatures: ${error.message}`;
+      }
+    }
+
+    // Initialize logos and signatures when page loads
     document.addEventListener('DOMContentLoaded', () => {
       loadLogos();
+      loadSignatures();
     });
 
     console.log('🎨 Auditor Slide Generator UI loaded');
