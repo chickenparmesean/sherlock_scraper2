@@ -315,11 +315,20 @@ async function updateTextInNode(node, targetName, newText, silent = false) {
   if (node.type === 'TEXT' && node.name.toLowerCase().includes(targetName.toLowerCase())) {
     if (!silent) console.log(`🎯 MATCH found! Updating "${node.name}" with: "${newText}"`);
     try {
+      console.log(`🔤 Loading font for "${node.name}":`, node.fontName);
       await figma.loadFontAsync(node.fontName);
+      console.log(`✏️ Updating characters for "${node.name}"`);
       node.characters = newText;
+      console.log(`✅ Successfully updated "${node.name}"`);
       return true;
     } catch (error) {
-      if (!silent) console.error(`❌ Failed to update text "${targetName}":`, error.message);
+      console.error(`❌ DETAILED ERROR for "${node.name}":`, {
+        error: error.message,
+        font: node.fontName,
+        nodeType: node.type,
+        nodeVisible: node.visible,
+        nodeParent: node.parent ? node.parent.name : 'none'
+      });
       return false;
     }
   }
