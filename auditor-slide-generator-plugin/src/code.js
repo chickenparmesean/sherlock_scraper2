@@ -1,4 +1,26 @@
-    data: { step: 'frame-duplicated' }
+figma.showUI(__html__, { width: 320, height: 600, themeColors: true });
+
+// Message handler
+figma.ui.onmessage = async (msg) => {
+  if (msg.type === 'generate-slide') {
+    await generateSlideFromData(msg.data);
+  }
+};
+
+// Main slide generation function
+async function generateSlideFromData(data) {
+  try {
+    // Step 1: Find and validate template
+    const templateFrame = findTemplateFrame();
+    if (!templateFrame) {
+      throw new Error('No frame selected or found to use as template');
+    }
+
+    // Duplicate template
+    const newSlide = await duplicateTemplateFrame(templateFrame, data.protocolName, data.auditorData.name);
+    figma.ui.postMessage({ 
+      type: 'slide-progress', 
+      data: { step: 'frame-duplicated' }
     });
     
     // Step 2: Update text layers
