@@ -690,7 +690,9 @@
       const proxiedUrl = getProxiedImageUrl(url);
       console.log('🔄 Proxied image URL:', proxiedUrl);
       
-      const response = await fetch(proxiedUrl);
+      const response = await fetch(proxiedUrl, {
+        headers: { 'Authorization': 'Bearer_MySecretKey789' }
+      });
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.status} - ${response.statusText}`);
       }
