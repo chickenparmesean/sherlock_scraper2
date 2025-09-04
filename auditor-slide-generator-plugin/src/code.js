@@ -260,19 +260,32 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   
   // Update each text layer
   let updatedCount = 0;
+  console.log('🔍 Looking for these text layers:', textMappings.map(m => m.targetName).join(', '));
+  
   for (const mapping of textMappings) {
     if (mapping.content) {
+      console.log(`🎯 Trying to update "${mapping.targetName}" with: "${mapping.content}"`);
       const updated = await updateTextInNode(slide, mapping.targetName, mapping.content);
-      if (updated) updatedCount++;
+      if (updated) {
+        updatedCount++;
+        console.log(`✅ Successfully updated "${mapping.targetName}"`);
+      } else {
+        console.log(`❌ Could not find text layer for "${mapping.targetName}"`);
+      }
+    } else {
+      console.log(`⏭️  Skipping "${mapping.targetName}" - no content provided`);
     }
   }
   
-  console.log(`📝 Updated ${updatedCount} text layers`);
+  console.log(`📝 Updated ${updatedCount} out of ${textMappings.filter(m => m.content).length} text layers`);
 }
 
 // Recursively find and update text nodes
 async function updateTextInNode(node, targetName, newText) {
+  console.log(`🔍 Checking node: "${node.name}" (type: ${node.type}) for target: "${targetName}"`);
+  
   if (node.type === 'TEXT' && node.name.toLowerCase().includes(targetName.toLowerCase())) {
+    console.log(`🎯 MATCH found! Updating "${node.name}" with: "${newText}"`);
     try {
       await figma.loadFontAsync(node.fontName);
       node.characters = newText;
