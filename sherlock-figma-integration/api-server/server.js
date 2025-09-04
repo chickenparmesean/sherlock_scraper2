@@ -227,10 +227,10 @@ app.post('/api/logos/upload', async (req, res) => {
       });
     }
 
-    // Validate file extension
-    if (!fileName.match(/\.(svg|png)$/i)) {
+    // Validate file extension (SVG only)
+    if (!fileName.match(/\.svg$/i)) {
       return res.status(400).json({
-        error: 'Only SVG and PNG files are allowed'
+        error: 'Only SVG files are allowed'
       });
     }
 

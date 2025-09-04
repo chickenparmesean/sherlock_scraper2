@@ -310,10 +310,24 @@
       </select>
     </div>
     
-    <div class="button-row">
+    <!-- Upload New Logo Section -->
+    <div class="upload-section" style="border: 1px solid #ddd; padding: 15px; margin-top: 15px; border-radius: 8px; background-color: #f9f9f9;">
+      <h3 style="margin-top: 0;">📤 Upload New Protocol Logo</h3>
+      
+      <div class="input-group">
+        <label for="protocolNameInput">Protocol Name (Required)</label>
+        <input type="text" id="protocolNameInput" placeholder="e.g., Compound, Aave, Uniswap" oninput="validateLogoUpload()" />
+        <div class="field-help">Enter the exact protocol name (used for filename)</div>
+      </div>
+      
+      <div class="input-group">
+        <label for="logoFileInput">SVG Logo File</label>
+        <input type="file" id="logoFileInput" accept=".svg" onchange="validateLogoUpload()" />
+        <div class="field-help">Only SVG files are accepted for perfect scaling</div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="uploadLogo()" id="uploadBtn" disabled>📤 Upload to GitHub</button>
       <button class="btn btn-secondary" onclick="loadLogos()">🔄 Refresh Logos</button>
-      <label for="logoFileInput" class="btn btn-secondary">📤 Upload New Logo</label>
-      <input type="file" id="logoFileInput" accept=".svg,.png" style="display: none;" onchange="uploadLogo()" />
     </div>
     
     <div id="logoStatus" class="field-help">Loading logos from repository...</div>
@@ -843,32 +857,62 @@
       console.log('📋 Selected logos updated:', selectedLogos);
     }
 
-    async function uploadLogo() {
+    function validateLogoUpload() {
+      const protocolName = document.getElementById('protocolNameInput').value.trim();
       const fileInput = document.getElementById('logoFileInput');
       const file = fileInput.files[0];
+      const uploadBtn = document.getElementById('uploadBtn');
       
-      if (!file) return;
+      // Enable upload button only if both protocol name and SVG file are provided
+      uploadBtn.disabled = !(protocolName && file && file.type.includes('svg'));
       
-      // Validate file type
-      if (!file.type.includes('svg') && !file.type.includes('png')) {
-        showStatus('Please upload SVG or PNG files only', 'error');
+      if (file && !file.type.includes('svg')) {
+        showStatus('⚠️ Only SVG files are allowed', 'error');
+        fileInput.value = '';
+        uploadBtn.disabled = true;
+      }
+    }
+
+    async function uploadLogo() {
+      const protocolNameInput = document.getElementById('protocolNameInput');
+      const fileInput = document.getElementById('logoFileInput');
+      const protocolName = protocolNameInput.value.trim();
+      const file = fileInput.files[0];
+      
+      // Final validation
+      if (!protocolName) {
+        showStatus('❌ Protocol name is required', 'error');
+        protocolNameInput.focus();
+        return;
+      }
+      
+      if (!file) {
+        showStatus('❌ Please select an SVG file', 'error');
+        return;
+      }
+      
+      // Validate file type (SVG only)
+      if (!file.type.includes('svg')) {
+        showStatus('❌ Only SVG files are allowed', 'error');
         return;
       }
       
       // Validate file size (max 1MB)
       if (file.size > 1024 * 1024) {
-        showStatus('File too large. Please keep under 1MB', 'error');
+        showStatus('❌ File too large. Please keep under 1MB', 'error');
         return;
       }
       
-      showStatus('Uploading logo to repository...', 'loading');
+      showStatus(`📤 Uploading ${protocolName} logo to GitHub...`, 'loading');
       
       try {
         // Convert file to base64
         const base64Content = await fileToBase64(file);
         
-        // Create filename (remove spaces, lowercase)
-        const fileName = file.name.replace(/\s+/g, '-').toLowerCase();
+        // Create filename from protocol name (sanitized)
+        const fileName = `${protocolName.replace(/[^a-zA-Z0-9]/g, '')}.svg`;
+        
+        console.log(`📤 Uploading ${protocolName} as ${fileName}`);
         
         // Upload to GitHub
         const apiHost = await getApiHost();
@@ -880,12 +924,13 @@
           body: JSON.stringify({
             fileName: fileName,
             fileContent: base64Content,
-            message: `Add ${fileName} logo via Figma plugin`
+            message: `Add ${protocolName} logo via Figma plugin`
           })
         });
         
         if (!response.ok) {
-          throw new Error(`Upload failed: ${response.status}`);
+          const errorData = await response.text();
+          throw new Error(`Upload failed: ${response.status} - ${errorData}`);
         }
         
         const result = await response.json();
@@ -893,17 +938,19 @@
           throw new Error(result.error || 'Upload failed');
         }
         
-        showStatus(`✅ Successfully uploaded: ${fileName}`, 'success');
+        showStatus(`✅ Successfully uploaded ${protocolName} logo!`, 'success');
         
-        // Refresh logo list
+        // Refresh logo list to show new logo
         await loadLogos();
         
-        // Clear file input
+        // Clear inputs
+        protocolNameInput.value = '';
         fileInput.value = '';
+        document.getElementById('uploadBtn').disabled = true;
         
       } catch (error) {
         console.error('❌ Logo upload failed:', error);
-        showStatus(`Upload failed: ${error.message}`, 'error');
+        showStatus(`❌ Upload failed: ${error.message}`, 'error');
       }
     }
 
