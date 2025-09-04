@@ -142,11 +142,17 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   
   // Update each text layer
   let updatedCount = 0;
+  console.log(`🔍 Looking for text layers to update. Available mappings: ${textMappings.map(m => m.targetName).join(', ')}`);
+  
   for (const mapping of textMappings) {
     if (mapping.content) {
+      console.log(`🎯 Looking for text layer "${mapping.targetName}" to update with: "${mapping.content}"`);
       const updated = await updateTextInNode(slide, mapping.targetName, mapping.content);
       if (updated) {
         updatedCount++;
+        console.log(`✅ Successfully updated "${mapping.targetName}"`);
+      } else {
+        console.log(`❌ Could not find or update text layer "${mapping.targetName}"`);
       }
     }
   }
@@ -154,14 +160,19 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
 
 // Recursively find and update text nodes
 async function updateTextInNode(node, targetName, newText) {
-  if (node.type === 'TEXT' && node.name.toLowerCase().includes(targetName.toLowerCase())) {
-    try {
-      await figma.loadFontAsync(node.fontName);
-      node.characters = newText;
-      return true;
-    } catch (error) {
-      console.error(`Failed to update text "${targetName}":`, error.message);
-      return false;
+  if (node.type === 'TEXT') {
+    console.log(`  📝 Found text node: "${node.name}" (looking for: "${targetName}")`);
+    if (node.name.toLowerCase().includes(targetName.toLowerCase())) {
+      try {
+        console.log(`  🎯 Match found! Updating "${node.name}" with: "${newText}"`);
+        await figma.loadFontAsync(node.fontName);
+        node.characters = newText;
+        console.log(`  ✅ Successfully updated text node "${node.name}"`);
+        return true;
+      } catch (error) {
+        console.error(`  ❌ Failed to update text "${targetName}":`, error.message);
+        return false;
+      }
     }
   }
   
