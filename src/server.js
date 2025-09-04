@@ -108,6 +108,46 @@ app.post('/api/scrape-profile', async (req, res) => {
   }
 });
 
+// Image proxy endpoint to bypass CORS restrictions
+app.get('/api/proxy-image', async (req, res) => {
+  try {
+    const { url } = req.query;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL parameter is required' });
+    }
+
+    console.log(`🖼️  Proxying image request: ${url}`);
+    
+    // Fetch the image from external URL
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      return res.status(response.status).json({ 
+        error: `Failed to fetch image: ${response.status} ${response.statusText}` 
+      });
+    }
+
+    // Get image data and content type
+    const imageBuffer = await response.arrayBuffer();
+    const contentType = response.headers.get('content-type') || 'image/png';
+    
+    // Set appropriate headers
+    res.set('Content-Type', contentType);
+    res.set('Cache-Control', 'public, max-age=86400'); // 24 hour cache
+    res.set('Access-Control-Allow-Origin', '*');
+    
+    // Send the image
+    res.send(Buffer.from(imageBuffer));
+
+  } catch (error) {
+    console.error('Image proxy error:', error.message);
+    res.status(500).json({
+      error: 'Failed to proxy image'
+    });
+  }
+});
+
 
 // Figma API endpoints
 app.post('/api/figma/test-connection', async (req, res) => {

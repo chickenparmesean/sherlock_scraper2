@@ -522,12 +522,24 @@
       return data.profile;
     }
 
+    function getProxiedImageUrl(originalUrl) {
+      // Check if it's an external URL that needs proxying
+      if (originalUrl && (originalUrl.includes('sherlock-files.ams3.digitaloceanspaces.com') || 
+          originalUrl.startsWith('https://') && !originalUrl.includes(window.location.hostname))) {
+        const apiHost = 'https://f173598a-dcb4-40b5-8a0e-65f88fad175c-00-pbhu69zimlaw.riker.replit.dev';
+        return `${apiHost}/api/proxy-image?url=${encodeURIComponent(originalUrl)}`;
+      }
+      return originalUrl;
+    }
+
     async function fetchImageAsBytes(url) {
-      console.log('🖼️  Attempting to fetch image from:', url);
-      const response = await fetch(url, {
-        mode: 'cors',
-        credentials: 'omit'
-      });
+      console.log('🖼️  Original image URL:', url);
+      
+      // Use proxy for external images to bypass CORS
+      const proxiedUrl = getProxiedImageUrl(url);
+      console.log('🔄 Proxied image URL:', proxiedUrl);
+      
+      const response = await fetch(proxiedUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.status} - ${response.statusText}`);
       }
