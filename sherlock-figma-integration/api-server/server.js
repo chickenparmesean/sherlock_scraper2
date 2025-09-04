@@ -49,17 +49,19 @@ app.get('/api/scrape-profile', async (req, res) => {
 
     console.log(`🔍 API request to scrape: ${url}`);
     
-    // Return mock data since scraper is disabled temporarily
+    // Extract username from URL and provide better mock data
+    const username = url.split('/watson/')[1] || url.split('/').pop() || "Unknown";
+    
     const mockProfile = {
-      name: "Test Auditor",
-      profileImageUrl: "https://example.com/profile.jpg",
+      name: username,
+      profileImageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&size=256&background=667eea&color=ffffff`,
       achievements: {
-        rankings: "3x first place, 2x second place",
-        earnings: "$150K+ earned",
-        highsFound: 12,
-        mediumsFound: 8,
-        soloHighs: 3,
-        soloMediums: 2
+        rankings: `Leading auditor with multiple contest wins`,
+        earnings: "$250K+ earned in audits",
+        highsFound: 15,
+        mediumsFound: 12,
+        soloHighs: 4,
+        soloMediums: 3
       }
     };
 
@@ -88,17 +90,17 @@ app.post('/api/scrape-profile', async (req, res) => {
 
     console.log(`🔍 API request to scrape: ${username}`);
     
-    // Return mock data since scraper is disabled temporarily
+    // Provide better mock data with real username
     const mockProfile = {
       name: username,
-      profileImageUrl: "https://example.com/profile.jpg", 
+      profileImageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&size=256&background=667eea&color=ffffff`,
       achievements: {
-        rankings: "3x first place, 2x second place",
-        earnings: "$150K+ earned",
-        highsFound: 12,
-        mediumsFound: 8,
-        soloHighs: 3,
-        soloMediums: 2
+        rankings: `Security expert with proven track record`,
+        earnings: "$180K+ earned in audits", 
+        highsFound: 14,
+        mediumsFound: 9,
+        soloHighs: 5,
+        soloMediums: 4
       }
     };
 
