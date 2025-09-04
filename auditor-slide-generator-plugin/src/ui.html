@@ -420,19 +420,9 @@
         // Fetch auditor data and profile image
         const auditorData = await fetchAuditorData(auditorUrl);
         
-        // Try to fetch profile image, but don't fail if it doesn't work
-        let profileImageBytes = null;
-        if (auditorData.profileImageUrl) {
-          try {
-            profileImageBytes = await fetchImageAsBytes(auditorData.profileImageUrl);
-            auditorData.profileImageBytes = profileImageBytes;
-            console.log('✅ Profile image fetched successfully');
-          } catch (error) {
-            console.warn('⚠️  Profile image fetch failed:', error.message);
-            console.log('Continuing slide generation without profile image');
-            // Don't fail the entire generation just because image fetch failed
-          }
-        }
+        // Skip profile image for now to get slide generation working
+        console.log('🚫 Skipping profile image fetch for debugging');
+        // TODO: Re-enable image fetching once slide generation works
 
         // Collect manual inputs
         const manualInputs = {
