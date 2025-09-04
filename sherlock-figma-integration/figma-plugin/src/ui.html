@@ -218,6 +218,87 @@
       width: 0%;
       transition: width 0.3s ease;
     }
+
+    /* Logo Grid Styles */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 8px;
+      background: #fafafa;
+    }
+
+    .logo-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .logo-item:hover {
+      border-color: #667eea;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .logo-item.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .logo-item img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+
+    .logo-item .logo-name {
+      font-size: 9px;
+      text-align: center;
+      color: #666;
+      line-height: 1.2;
+      max-width: 50px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .loading-logos {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 11px;
+    }
+
+    .selected-logos {
+      margin-top: 8px;
+      min-height: 20px;
+    }
+
+    .selected-logo-badge {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      margin: 2px;
+      cursor: pointer;
+    }
+
+    .selected-logo-badge:hover {
+      background: #5a6fd8;
+    }
   </style>
 </head>
 <body>
@@ -247,6 +328,31 @@
     </div>
     
     <button class="btn btn-secondary" onclick="testAuditorData()">Test Auditor Data</button>
+  </div>
+
+  <!-- Protocol Logos -->
+  <div class="section">
+    <h2>🏢 Protocol Logos</h2>
+    
+    <div class="input-group">
+      <label for="logoSearch">Search & Select Logos</label>
+      <input type="text" id="logoSearch" placeholder="Type to search logos..." onkeyup="filterLogos()" />
+    </div>
+    
+    <div class="input-group">
+      <div id="logoGrid" class="logo-grid">
+        <div class="loading-logos">Loading logos from repository...</div>
+      </div>
+    </div>
+    
+    <div class="button-row">
+      <button class="btn btn-secondary" onclick="loadLogos()">🔄 Refresh Logos</button>
+      <label for="logoFileInput" class="btn btn-secondary">📤 Upload New Logo</label>
+      <input type="file" id="logoFileInput" accept=".svg,.png" style="display: none;" onchange="uploadLogo()" />
+    </div>
+    
+    <div id="selectedLogos" class="selected-logos"></div>
+    <div class="field-help">Select up to 6 logos for the slide. Click to select/deselect.</div>
   </div>
 
   <!-- Manual Content -->
@@ -307,6 +413,8 @@
     // iframe UI State
     let currentAuditorData = null;
     let isGenerating = false;
+    let allLogos = [];
+    let selectedLogos = [];
 
     // Message passing to main thread
     function postToMain(message) {
@@ -437,7 +545,8 @@
               profileImageBytes: profileImageBytes
             },
             manualInputs,
-            protocolName
+            protocolName,
+            selectedLogos: selectedLogos
           }
         });
 
@@ -642,6 +751,182 @@
     function hideProgress() {
       document.getElementById('progressContainer').classList.add('hidden');
     }
+
+    // Logo Management Functions
+    async function loadLogos() {
+      const logoGrid = document.getElementById('logoGrid');
+      logoGrid.innerHTML = '<div class="loading-logos">Loading logos from repository...</div>';
+      
+      try {
+        const apiHost = await getApiHost();
+        const response = await fetch(`${apiHost}/api/logos`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load logos: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to load logos');
+        }
+        
+        allLogos = data.logos || [];
+        displayLogos(allLogos);
+        
+        console.log(`✅ Loaded ${allLogos.length} logos from GitHub repository`);
+        
+      } catch (error) {
+        console.error('❌ Failed to load logos:', error);
+        logoGrid.innerHTML = `<div class="loading-logos" style="color: red;">Failed to load logos: ${error.message}</div>`;
+      }
+    }
+
+    function displayLogos(logos) {
+      const logoGrid = document.getElementById('logoGrid');
+      
+      if (logos.length === 0) {
+        logoGrid.innerHTML = '<div class="loading-logos">No logos found</div>';
+        return;
+      }
+      
+      logoGrid.innerHTML = logos.map(logo => `
+        <div class="logo-item ${selectedLogos.some(s => s.name === logo.name) ? 'selected' : ''}" 
+             onclick="toggleLogo('${logo.name}', '${logo.url}', '${logo.fileName}')">
+          <img src="${logo.url}" alt="${logo.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjBGMEYwIi8+CjxwYXRoIGQ9Ik0xNiA4VjI0TTE2IDhMOCAxNk0xNiA4TDI0IDE2IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo='" />
+          <div class="logo-name">${logo.name}</div>
+        </div>
+      `).join('');
+    }
+
+    function toggleLogo(logoName, logoUrl, logoFileName) {
+      const existingIndex = selectedLogos.findIndex(logo => logo.name === logoName);
+      
+      if (existingIndex >= 0) {
+        // Deselect logo
+        selectedLogos.splice(existingIndex, 1);
+      } else {
+        // Select logo (max 6)
+        if (selectedLogos.length >= 6) {
+          showStatus('Maximum 6 logos allowed', 'error');
+          setTimeout(() => hideStatus(), 2000);
+          return;
+        }
+        
+        selectedLogos.push({
+          name: logoName,
+          url: logoUrl,
+          fileName: logoFileName
+        });
+      }
+      
+      updateSelectedLogosDisplay();
+      displayLogos(allLogos); // Refresh grid to update selected state
+    }
+
+    function updateSelectedLogosDisplay() {
+      const container = document.getElementById('selectedLogos');
+      
+      if (selectedLogos.length === 0) {
+        container.innerHTML = '<div class="field-help">No logos selected</div>';
+        return;
+      }
+      
+      container.innerHTML = selectedLogos.map(logo => `
+        <span class="selected-logo-badge" onclick="toggleLogo('${logo.name}', '${logo.url}', '${logo.fileName}')">
+          ${logo.name} ×
+        </span>
+      `).join('');
+    }
+
+    function filterLogos() {
+      const searchTerm = document.getElementById('logoSearch').value.toLowerCase();
+      const filteredLogos = allLogos.filter(logo => 
+        logo.name.toLowerCase().includes(searchTerm)
+      );
+      displayLogos(filteredLogos);
+    }
+
+    async function uploadLogo() {
+      const fileInput = document.getElementById('logoFileInput');
+      const file = fileInput.files[0];
+      
+      if (!file) return;
+      
+      // Validate file type
+      if (!file.type.includes('svg') && !file.type.includes('png')) {
+        showStatus('Please upload SVG or PNG files only', 'error');
+        return;
+      }
+      
+      // Validate file size (max 1MB)
+      if (file.size > 1024 * 1024) {
+        showStatus('File too large. Please keep under 1MB', 'error');
+        return;
+      }
+      
+      showStatus('Uploading logo to repository...', 'loading');
+      
+      try {
+        // Convert file to base64
+        const base64Content = await fileToBase64(file);
+        
+        // Create filename (remove spaces, lowercase)
+        const fileName = file.name.replace(/\s+/g, '-').toLowerCase();
+        
+        // Upload to GitHub
+        const apiHost = await getApiHost();
+        const response = await fetch(`${apiHost}/api/logos/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fileName: fileName,
+            fileContent: base64Content,
+            message: `Add ${fileName} logo via Figma plugin`
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Upload failed: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || 'Upload failed');
+        }
+        
+        showStatus(`✅ Successfully uploaded: ${fileName}`, 'success');
+        
+        // Refresh logo list
+        await loadLogos();
+        
+        // Clear file input
+        fileInput.value = '';
+        
+      } catch (error) {
+        console.error('❌ Logo upload failed:', error);
+        showStatus(`Upload failed: ${error.message}`, 'error');
+      }
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          // Remove the data:image/...;base64, prefix
+          const base64 = reader.result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // Initialize logos when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLogos();
+    });
 
     console.log('🎨 Auditor Slide Generator UI loaded');
   </script>
