@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an enhanced Node.js web scraping application designed to extract comprehensive auditor data from the Sherlock DeFi security audit platform. The system scrapes audits.sherlock.xyz to collect detailed information about security auditors for automated Figma slide generation, including rankings, earnings, vulnerability discovery statistics, and profile images.
+This is a comprehensive Node.js application that combines web scraping and Figma API integration for automated slide generation. The system extracts detailed auditor data from the Sherlock DeFi security audit platform (audits.sherlock.xyz) and provides Figma API integration to create professional slides automatically. It captures rankings, earnings, vulnerability discovery statistics, and profile images for seamless slide generation workflow.
 
 ## User Preferences
 
@@ -25,6 +25,12 @@ The application follows a modular, dual-approach architecture for robust data ex
 - Number of highs and mediums found
 - Number of solo highs and solo mediums found
 
+**Figma Integration Architecture**: 
+- `FigmaClient` class providing comprehensive Figma API integration
+- Template-based slide duplication (creates new copies, never modifies originals) 
+- Text layer updates and image replacement capabilities
+- File structure analysis for identifying updateable elements
+
 **Fallback Architecture**: The system gracefully degrades from Puppeteer to simple HTTP requests when browser automation is unavailable.
 
 **Structured Output Format**: Data is standardized into the following JSON structure:
@@ -46,9 +52,14 @@ The application follows a modular, dual-approach architecture for robust data ex
 ### File Structure
 
 **Source Organization**: All source code is organized in the `src/` directory:
-- `src/sherlock-scraper.js`: Advanced Puppeteer-based scraper
-- `src/sherlock-scraper-simple.js`: Simple HTTP-based scraper
-- `src/test-scraper.js`: Testing and demonstration script
+- `src/sherlock-scraper.ts`: Advanced Puppeteer-based scraper with TypeScript
+- `src/figma-client.ts`: Comprehensive Figma API client for slide generation
+- `src/figma-test.ts`: Figma integration testing and demonstration utilities
+- `src/image-utils.ts`: Image processing and conversion utilities
+- `src/config.ts`: Configuration management and constants
+- `src/types.ts`: TypeScript interface definitions
+- `src/server.js`: Express web server with API endpoints for both scraping and Figma
+- `src/public/index.html`: Web UI for testing scraper and Figma integration
 
 **Error Handling**: Comprehensive error handling with graceful fallbacks and sample data generation for testing purposes.
 
@@ -57,12 +68,27 @@ The application follows a modular, dual-approach architecture for robust data ex
 **HTTP Client**: Axios (^1.11.0) for HTTP requests with proper headers and user agent strings
 **HTML Parsing**: Cheerio (^1.1.2) for server-side jQuery-like HTML manipulation
 **Browser Automation**: Puppeteer (^24.18.0) for handling dynamic content and JavaScript-rendered pages
-**Web Framework**: Express (^5.1.0) included for potential future API development
-**Target Platform**: Sherlock Protocol (audits.sherlock.xyz) as the primary data source
+**Web Framework**: Express (^5.1.0) with comprehensive API endpoints for scraping and Figma integration
+**Figma Integration**: Native Figma API client with form-data support for image uploads
+**TypeScript Support**: Full TypeScript implementation with proper type definitions
+**Target Platforms**: 
+- Sherlock Protocol (audits.sherlock.xyz) for auditor data
+- Figma API (api.figma.com) for automated slide generation
 
 ## Recent Changes
 
-**September 04, 2025**: Successfully completed enhanced scraper implementation for comprehensive auditor profile data extraction:
+**September 04, 2025**: Successfully implemented Phase 1 of comprehensive Figma slide generation system:
+
+**Phase 1 - Figma Integration Completed:**
+- ✅ Figma API client with FIGMA_TOKEN authentication
+- ✅ File duplication functionality (duplicateFigmaFile) - creates new copies for each slide
+- ✅ Core functions: getFigmaFile(), findLayer(), updateText(), replaceImage()
+- ✅ Batch text updates with updateMultipleTexts()
+- ✅ File structure analysis for identifying text and image layers
+- ✅ Comprehensive web UI for testing Figma connectivity
+- ✅ API endpoints: /api/figma/test-connection, /api/figma/analyze-structure, /api/figma/create-slide
+
+**Enhanced Scraper Implementation (Previously Completed):**
 
 **Core Functionality Achieved:**
 - ✅ Accurate contest rankings extraction (e.g., "3x first place, 3x second place, 4x third place")
@@ -96,4 +122,18 @@ The application follows a modular, dual-approach architecture for robust data ex
 }
 ```
 
-The scraper is now production-ready for automated Figma slide generation with accurate, comprehensive auditor profile data extraction from the Sherlock Protocol platform.
+The system now provides a complete Phase 1 implementation for automated Figma slide generation:
+
+**Current Capabilities:**
+- Full auditor profile data extraction from Sherlock Protocol
+- Figma template duplication and slide creation
+- Text layer identification and batch updates
+- Image container detection for future image replacement
+- Web interface for testing both scraping and Figma functionality
+
+**Planned Development Phases:**
+- Phase 2: Database setup for protocol logo management
+- Phase 3: Advanced image processing and layout handling
+- Phase 4: Complete integration with UI for auditor selection and slide export
+
+The foundation is production-ready for basic slide generation workflows with manual layer ID identification.

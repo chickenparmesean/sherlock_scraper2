@@ -213,13 +213,22 @@
             border-radius: 3px;
             font-family: 'Courier New', monospace;
         }
+
+        .examples p {
+            margin: 0.5rem 0;
+            color: #555;
+        }
+
+        .btn:not(:last-child) {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔍 Sherlock Scraper</h1>
-            <p>Test the enhanced auditor profile scraper</p>
+            <h1>🔍 Sherlock Scraper & Figma Generator</h1>
+            <p>Test the enhanced auditor profile scraper and Figma slide generation</p>
         </div>
 
         <div class="content">
@@ -246,6 +255,30 @@
                     <textarea id="multipleUsernames" placeholder="berndartmueller&#10;detectiveking&#10;cu5t0mPe0"></textarea>
                 </div>
                 <button class="btn" onclick="scrapeMultiple()">Scrape All Profiles</button>
+            </div>
+
+            <!-- Figma Integration Section -->
+            <div class="section">
+                <h2>🎨 Figma Slide Generation (Phase 1)</h2>
+                
+                <!-- Test Figma Connection -->
+                <div class="input-group">
+                    <label for="figmaFileKey">Figma Template File Key:</label>
+                    <input type="text" id="figmaFileKey" placeholder="e.g., ABC123XYZ (from figma.com/file/ABC123XYZ/...)" />
+                </div>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <button class="btn" onclick="testFigmaConnection()">Test Connection</button>
+                    <button class="btn" onclick="analyzeFigmaStructure()">Analyze Structure</button>
+                    <button class="btn" onclick="createTestSlide()">Create Test Slide</button>
+                </div>
+                
+                <div class="examples">
+                    <h4>How to get your Figma file key:</h4>
+                    <p>1. Open your template in Figma</p>
+                    <p>2. Copy the URL: <code>https://www.figma.com/file/ABC123XYZ/Template-Name</code></p>
+                    <p>3. Extract the file key: <code>ABC123XYZ</code> (the part after /file/ and before the next /)</p>
+                </div>
             </div>
 
             <!-- Results Section -->
@@ -321,6 +354,191 @@
             } catch (error) {
                 showError(`Network error: ${error.message}`);
             }
+        }
+
+        // Figma Integration Functions
+        async function testFigmaConnection() {
+            const fileKey = document.getElementById('figmaFileKey').value.trim();
+            if (!fileKey) {
+                alert('Please enter a Figma file key');
+                return;
+            }
+
+            showLoading('Testing Figma connection...');
+
+            try {
+                const response = await fetch('/api/figma/test-connection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ fileKey })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayFigmaResults({
+                        type: 'connection',
+                        data: data.file
+                    });
+                } else {
+                    showError(`Figma Error: ${data.error}`);
+                }
+            } catch (error) {
+                showError(`Network error: ${error.message}`);
+            }
+        }
+
+        async function analyzeFigmaStructure() {
+            const fileKey = document.getElementById('figmaFileKey').value.trim();
+            if (!fileKey) {
+                alert('Please enter a Figma file key');
+                return;
+            }
+
+            showLoading('Analyzing Figma file structure...');
+
+            try {
+                const response = await fetch('/api/figma/analyze-structure', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ fileKey })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayFigmaResults({
+                        type: 'analysis',
+                        data: data.analysis
+                    });
+                } else {
+                    showError(`Figma Error: ${data.error}`);
+                }
+            } catch (error) {
+                showError(`Network error: ${error.message}`);
+            }
+        }
+
+        async function createTestSlide() {
+            const fileKey = document.getElementById('figmaFileKey').value.trim();
+            if (!fileKey) {
+                alert('Please enter a Figma file key');
+                return;
+            }
+
+            const slideName = prompt('Enter a name for the test slide:', `Test Slide - ${new Date().toLocaleDateString()}`);
+            if (!slideName) return;
+
+            showLoading('Creating test slide...');
+
+            try {
+                const response = await fetch('/api/figma/create-slide', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        templateFileKey: fileKey,
+                        slideName 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayFigmaResults({
+                        type: 'creation',
+                        data: {
+                            newFileKey: data.newFileKey,
+                            message: data.message
+                        }
+                    });
+                } else {
+                    showError(`Figma Error: ${data.error}`);
+                }
+            } catch (error) {
+                showError(`Network error: ${error.message}`);
+            }
+        }
+
+        function displayFigmaResults(result) {
+            const results = document.getElementById('results');
+            const content = document.getElementById('resultsContent');
+            
+            let html = '';
+            
+            if (result.type === 'connection') {
+                html = `
+                    <div class="profile-card">
+                        <h3>🟢 Figma Connection Successful</h3>
+                        <div class="achievement-grid">
+                            <div class="achievement-item">
+                                <div class="achievement-label">File Name</div>
+                                <div class="achievement-value">${result.data.name}</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-label">Version</div>
+                                <div class="achievement-value">${result.data.version}</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-label">Last Modified</div>
+                                <div class="achievement-value">${new Date(result.data.lastModified).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (result.type === 'analysis') {
+                html = `
+                    <div class="profile-card">
+                        <h3>🔍 File Structure Analysis: ${result.data.fileName}</h3>
+                        
+                        <h4>📝 Text Layers (${result.data.textLayers.length} found)</h4>
+                        <div style="max-height: 200px; overflow-y: auto; margin-bottom: 1rem;">
+                            ${result.data.textLayers.map(layer => `
+                                <div style="background: #f8f9fa; padding: 8px; margin: 4px 0; border-radius: 4px; font-size: 12px;">
+                                    <strong>${layer.name}</strong> (ID: ${layer.id})<br>
+                                    <em>Current text: "${layer.characters}"</em>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <h4>🖼️ Potential Image Containers (${result.data.imageLayers.length} found)</h4>
+                        <div style="max-height: 200px; overflow-y: auto;">
+                            ${result.data.imageLayers.map(layer => `
+                                <div style="background: #f8f9fa; padding: 8px; margin: 4px 0; border-radius: 4px; font-size: 12px;">
+                                    <strong>${layer.name}</strong> (${layer.type}) - ID: ${layer.id}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (result.type === 'creation') {
+                html = `
+                    <div class="profile-card">
+                        <h3>✅ Slide Created Successfully</h3>
+                        <div class="achievement-grid">
+                            <div class="achievement-item">
+                                <div class="achievement-label">New File Key</div>
+                                <div class="achievement-value">${result.data.newFileKey}</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-label">Figma URL</div>
+                                <div class="achievement-value">
+                                    <a href="https://www.figma.com/file/${result.data.newFileKey}" target="_blank" style="color: #667eea;">Open in Figma</a>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 1rem; color: #666;">${result.data.message}</p>
+                    </div>
+                `;
+            }
+            
+            content.innerHTML = html;
+            results.style.display = 'block';
         }
 
         function showLoading(message) {
