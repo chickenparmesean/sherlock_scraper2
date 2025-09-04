@@ -184,7 +184,7 @@ async function handleGenerateSlide(data) {
       data: {
         success: true,
         slideName: newSlide.name,
-        message: `Slide generated successfully for ${data.auditorData.name}!`
+        message: `Slide generated for ${data.auditorData.name}! Debug: goodfit1="${data.manualInputs.goodfit1 || 'empty'}", goodfit2="${data.manualInputs.goodfit2 || 'empty'}", goodfit3="${data.manualInputs.goodfit3 || 'empty'}"`
       }
     });
     
