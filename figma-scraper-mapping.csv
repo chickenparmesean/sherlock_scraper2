@@ -4,7 +4,7 @@ Text,auditor-subheading,1:10,N/A,string,Manual - UI Input,User needs to input cu
 Text,auditor-description,1:11,N/A,string,Manual - UI Input,User needs to write custom bio/description
 Text,achievement-1,1:14,profile.achievements.rankings,string,Auto - Scraper,Contest rankings from scraper
 Text,achievement-2,1:62,profile.achievements.earnings,string,Auto - Scraper,Earnings data from scraper
-Text,achievement-3,1:64,N/A,string,Manual - UI Input,User needs to input custom achievement text
+Text,achievement-3,1:64,profile.achievements.vulnerabilitiesSummary,string,Auto - Scraper,Combined vulnerability stats (highs/mediums/solo found)
 Text,achievement-4,1:66,N/A,string,Manual - UI Input,User needs to input custom achievement text
 Text,goodfit-1,1:15,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
 Text,goodfit-2,1:68,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
@@ -20,7 +20,8 @@ Image,logo3,2:3,N/A,image_file,Future Development,Protocol logo database needed
 Image,sherlocklogo,2:14,N/A,image_file,Static,Sherlock branding - likely no changes needed
 
 Additional Scraper Data Available,,,,,
-N/A,profile.achievements.highsFound,number,Auto - Available,High vulnerabilities found count
-N/A,profile.achievements.mediumsFound,number,Auto - Available,Medium vulnerabilities found count
-N/A,profile.achievements.soloHighs,number,Auto - Available,Solo high vulnerabilities found
-N/A,profile.achievements.soloMediums,number,Auto - Available,Solo medium vulnerabilities found
+N/A,profile.achievements.highsFound,number,Auto - Available (Individual),High vulnerabilities found count (used in summary)
+N/A,profile.achievements.mediumsFound,number,Auto - Available (Individual),Medium vulnerabilities found count (used in summary)
+N/A,profile.achievements.soloHighs,number,Auto - Available (Individual),Solo high vulnerabilities found (used in summary)
+N/A,profile.achievements.soloMediums,number,Auto - Available (Individual),Solo medium vulnerabilities found (used in summary)
+N/A,profile.achievements.vulnerabilitiesSummary,string,Auto - Available (Combined),"Combined formatted string: ""xx highs found, xx solo highs found, xx mediums found, xx solo mediums found"""

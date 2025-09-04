@@ -192,7 +192,8 @@ class SherlockScraper {
                 highsFound: 0,
                 mediumsFound: 0,
                 soloHighs: 0,
-                soloMediums: 0
+                soloMediums: 0,
+                vulnerabilitiesSummary: ''
             }
         };
         if (imageResult.success) {
@@ -242,7 +243,8 @@ class SherlockScraper {
             highsFound: 0,
             mediumsFound: 0,
             soloHighs: 0,
-            soloMediums: 0
+            soloMediums: 0,
+            vulnerabilitiesSummary: ''
         };
         try {
             const $ = cheerio.load(html);
@@ -451,6 +453,23 @@ class SherlockScraper {
             if (opts.enableLogging) {
                 console.log(`Error extracting achievements: ${error}`);
             }
+        }
+        // Format vulnerabilities summary
+        if (achievements.highsFound > 0 || achievements.mediumsFound > 0 || achievements.soloHighs > 0 || achievements.soloMediums > 0) {
+            const parts = [];
+            if (achievements.highsFound > 0) {
+                parts.push(`${achievements.highsFound} highs found`);
+            }
+            if (achievements.soloHighs > 0) {
+                parts.push(`${achievements.soloHighs} solo highs found`);
+            }
+            if (achievements.mediumsFound > 0) {
+                parts.push(`${achievements.mediumsFound} mediums found`);
+            }
+            if (achievements.soloMediums > 0) {
+                parts.push(`${achievements.soloMediums} solo mediums found`);
+            }
+            achievements.vulnerabilitiesSummary = parts.join(', ');
         }
         return achievements;
     }

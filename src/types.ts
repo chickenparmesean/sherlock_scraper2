@@ -59,6 +59,7 @@ export interface ProfileData {
     mediumsFound: number;
     soloHighs: number;
     soloMediums: number;
+    vulnerabilitiesSummary: string;
   };
   metadata?: Record<string, any>;
 }
