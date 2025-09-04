@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Auditor Slide Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 16px;
+      background: #f7f7f7;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section h2 .icon {
+      font-size: 16px;
+    }
+
+    .collapsible {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .collapsible.collapsed + .section-content {
+      display: none;
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    .input-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #666;
+    }
+
+    .label-required {
+      color: #e74c3c;
+    }
+
+    input[type="text"], input[type="url"], textarea, select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: inherit;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, input[type="url"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+      line-height: 1.3;
+    }
+
+    .textarea-large {
+      min-height: 80px;
+    }
+
+    .field-help {
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      background: #5a6fd8;
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      font-size: 11px;
+      padding: 8px 12px;
+      margin-top: 4px;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 10px;
+      width: auto;
+      margin: 0;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .button-row .btn {
+      margin-top: 0;
+    }
+
+    .status {
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .status.loading {
+      background: #e8f4f8;
+      color: #2c3e50;
+      border: 1px solid #bee5eb;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #eee;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .logo-item {
+      border: 2px solid #e5e5e5;
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .logo-item:hover {
+      border-color: #667eea;
+    }
+
+    .logo-item.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .logo-item img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+
+    .logo-item .name {
+      font-size: 9px;
+      color: #666;
+      word-break: break-word;
+    }
+
+    .logo-upload {
+      border: 2px dashed #ddd;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .logo-upload:hover {
+      border-color: #667eea;
+    }
+
+    .logo-upload.dragover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .analysis-result {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 10px;
+    }
+
+    .analysis-result h4 {
+      font-size: 11px;
+      margin-bottom: 6px;
+      color: #495057;
+    }
+
+    .analysis-item {
+      background: white;
+      padding: 6px 8px;
+      margin: 4px 0;
+      border-radius: 3px;
+      border-left: 3px solid #667eea;
+    }
+
+    .analysis-item strong {
+      color: #333;
+    }
+
+    .analysis-item em {
+      color: #666;
+      font-size: 9px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box input {
+      padding-left: 30px;
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 12px;
+    }
+
+    .layout-selector {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .layout-option {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid #e5e5e5;
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 10px;
+    }
+
+    .layout-option:hover {
+      border-color: #667eea;
+    }
+
+    .layout-option.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+      color: #667eea;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .template-info {
+      background: #e8f5e8;
+      border: 1px solid #4caf50;
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 12px;
+      font-size: 10px;
+    }
+
+    .template-info .template-name {
+      font-weight: 600;
+      color: #2e7d32;
+    }
+
+    .examples {
+      background: #e8f4f8;
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 6px;
+      font-size: 10px;
+      color: #2c3e50;
+    }
+
+    .examples strong {
+      color: #1a1a2e;
+    }
+
+    .logo-counter {
+      background: #667eea;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 10px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎨 Auditor Slide Generator</h1>
+    <p>Professional slides with Sherlock data + custom content</p>
+  </div>
+
+  <!-- Template Setup Section -->
+  <div class="section">
+    <h2 class="collapsible">
+      <span class="icon">📋</span>
+      Template Setup
+    </h2>
+    <div class="section-content">
+      <div id="templateInfo" class="template-info hidden">
+        Template: <span class="template-name" id="templateName">None selected</span>
+      </div>
+      
+      <p class="field-help" style="margin-bottom: 12px;">
+        Select a frame to use as your slide template, then analyze its structure.
+      </p>
+      
+      <div class="button-row">
+        <button class="btn btn-secondary" onclick="setTemplate()">
+          Set Template
+        </button>
+        <button class="btn btn-secondary" onclick="analyzeTemplate()">
+          Analyze Template
+        </button>
+      </div>
+      
+      <div id="templateAnalysis" class="hidden">
+        <!-- Template analysis results will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Auditor & Protocol Section -->
+  <div class="section">
+    <h2 class="collapsible">
+      <span class="icon">👤</span>
+      Auditor & Protocol
+    </h2>
+    <div class="section-content">
+      <div class="input-group">
+        <label for="auditorUrl">Auditor Profile URL <span class="label-required">*</span></label>
+        <input type="url" id="auditorUrl" placeholder="https://audits.sherlock.xyz/watson/berndartmueller" />
+        <div class="field-help">Paste the full Sherlock profile URL to auto-fill auditor data</div>
+        <div class="examples">
+          <strong>Example:</strong> https://audits.sherlock.xyz/watson/berndartmueller
+        </div>
+        <button class="btn btn-secondary" onclick="testScraper()" style="margin-top: 8px;">
+          Test Auditor Data
+        </button>
+      </div>
+
+      <div class="input-group">
+        <label for="protocolName">Protocol Name <span class="label-required">*</span></label>
+        <input type="text" id="protocolName" placeholder="e.g., Aave, Compound, Uniswap" />
+        <div class="field-help">Used in slide title and throughout content</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo Selection Section -->
+  <div class="section">
+    <h2 class="collapsible">
+      <span class="icon">🏢</span>
+      Logo Selection
+      <span class="logo-counter" id="logoCounter">0 selected</span>
+    </h2>
+    <div class="section-content">
+      <div class="input-group">
+        <label>Logo Layout</label>
+        <div class="layout-selector">
+          <div class="layout-option selected" data-layout="3" onclick="selectLayout('3')">
+            3 Logos
+          </div>
+          <div class="layout-option" data-layout="4" onclick="selectLayout('4')">
+            4 Logos
+          </div>
+          <div class="layout-option" data-layout="6" onclick="selectLayout('6')">
+            6 Logos
+          </div>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="logoSearch" placeholder="Search logos..." oninput="filterLogos()" />
+      </div>
+
+      <div class="logo-upload" onclick="uploadLogo()" ondrop="handleLogoDrop(event)" ondragover="handleLogoDragOver(event)" ondragleave="handleLogoDragLeave(event)">
+        <div>📁 Upload New Logo</div>
+        <div class="field-help">Click to upload or drag & drop PNG/SVG files</div>
+      </div>
+
+      <div class="logo-grid" id="logoGrid">
+        <!-- Logos will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Content Section -->
+  <div class="section">
+    <h2 class="collapsible">
+      <span class="icon">✏️</span>
+      Custom Content
+    </h2>
+    <div class="section-content">
+      <div class="input-group">
+        <label for="subheading">Auditor Subheading</label>
+        <input type="text" id="subheading" placeholder="e.g., Security Expert, Leading DeFi Auditor" />
+        <div class="field-help">Brief tagline about the auditor</div>
+      </div>
+
+      <div class="input-group">
+        <label for="description">Auditor Description</label>
+        <textarea id="description" class="textarea-large" placeholder="Write a comprehensive bio highlighting the auditor's expertise, background, and key achievements..."></textarea>
+        <div class="field-help">Detailed description of auditor's background and expertise</div>
+      </div>
+
+      <div class="input-group">
+        <label for="achievement4">Additional Achievement</label>
+        <textarea id="achievement4" placeholder="e.g., Critical Bug Bounty submissions for major protocols..."></textarea>
+        <div class="field-help">Fourth achievement line (1-3 are auto-filled from Sherlock)</div>
+      </div>
+
+      <div class="input-group">
+        <label for="goodfit1">Why Great Fit - Point 1</label>
+        <textarea id="goodfit1" placeholder="e.g., Deep expertise in yield farming protocols and governance mechanisms..."></textarea>
+        <div class="field-help">First reason why this auditor is perfect for the protocol</div>
+      </div>
+
+      <div class="input-group">
+        <label for="goodfit2">Why Great Fit - Point 2</label>
+        <textarea id="goodfit2" placeholder="e.g., Proven track record with similar protocol architectures..."></textarea>
+        <div class="field-help">Second reason why this auditor is perfect for the protocol</div>
+      </div>
+
+      <div class="input-group">
+        <label for="goodfit3">Why Great Fit - Point 3</label>
+        <textarea id="goodfit3" placeholder="e.g., Experience finding critical vulnerabilities in complex smart contract systems..."></textarea>
+        <div class="field-help">Third reason why this auditor is perfect for the protocol</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate Section -->
+  <div class="section">
+    <button class="btn" onclick="generateSlide()" id="generateBtn">
+      🎨 Generate Slide
+    </button>
+    
+    <div id="progressContainer" class="hidden">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    
+    <div id="status" class="hidden">
+      <!-- Status messages will appear here -->
+    </div>
+  </div>
+
+  <script src="ui.js"></script>
+</body>
+</html>

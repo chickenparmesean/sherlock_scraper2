@@ -1,0 +1,50 @@
+{
+  "name": "Auditor Slide Generator",
+  "id": "1234567890123456789",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://audits.sherlock.xyz",
+      "https://sherlock-files.ams3.digitaloceanspaces.com",
+      "https://localhost:5000",
+      "*.replit.dev",
+      "*.repl.co",
+      "https://api.github.com",
+      "https://raw.githubusercontent.com"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "Template Frame",
+      "key": "templateFrame",
+      "description": "Select the frame to use as slide template"
+    },
+    {
+      "name": "Auditor URL",
+      "key": "auditorUrl", 
+      "description": "Sherlock profile URL for the auditor"
+    },
+    {
+      "name": "Protocol Name",
+      "key": "protocolName",
+      "description": "Name of the protocol for the slide"
+    }
+  ],
+  "menu": [
+    {
+      "name": "Generate Auditor Slide",
+      "command": "generate-slide"
+    },
+    {
+      "name": "Manage Logo Database",
+      "command": "manage-logos"
+    }
+  ]
+}
