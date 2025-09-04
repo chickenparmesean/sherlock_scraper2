@@ -485,8 +485,13 @@
           try {
             profileImageBytes = await fetchImageAsBytes(auditorData.profileImageUrl);
             console.log('✅ Profile image fetched successfully, bytes length:', profileImageBytes ? profileImageBytes.length : 'null');
+            if (!profileImageBytes) {
+              throw new Error('Profile image bytes are null or empty');
+            }
           } catch (error) {
             console.error('❌ Failed to fetch profile image:', error.message);
+            console.error('❌ Profile image URL was:', auditorData.profileImageUrl);
+            showStatus(`⚠️ Profile image failed to load: ${error.message}`, 'warning');
           }
         }
 
