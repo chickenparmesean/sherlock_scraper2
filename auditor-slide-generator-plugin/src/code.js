@@ -7,7 +7,7 @@ console.log('🎨 Auditor Slide Generator - Main Thread Loaded');
 let currentTemplate = null;
 
 // Initialize plugin UI
-figma.showUI(__html__, { 
+figma.showUI('', { 
   width: 400, 
   height: 650,
   themeColors: true 
