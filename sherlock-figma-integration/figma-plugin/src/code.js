@@ -228,16 +228,26 @@ async function placeLogosInSlide(slide, selectedLogos) {
           const svgString = String.fromCharCode.apply(null, logo.bytes);
           const svgNode = figma.createNodeFromSvg(svgString);
           
-          // Position the SVG node over the container
-          svgNode.x = container.x;
-          svgNode.y = container.y;
-          svgNode.resize(container.width, container.height);
+          // Set fixed width of 150px and maintain aspect ratio
+          const originalWidth = svgNode.width;
+          const originalHeight = svgNode.height;
+          const targetWidth = 150;
+          const aspectRatio = originalHeight / originalWidth;
+          const targetHeight = targetWidth * aspectRatio;
+          
+          // Resize with locked aspect ratio
+          svgNode.resize(targetWidth, targetHeight);
+          
+          // Center the logo within the container
+          svgNode.x = container.x + (container.width - targetWidth) / 2;
+          svgNode.y = container.y + (container.height - targetHeight) / 2;
+          
           svgNode.name = `${logo.name} Logo`;
           
           // Add to the same parent as the container
           container.parent.appendChild(svgNode);
           
-          console.log(`✅ SVG logo "${logo.name}" placed successfully`);
+          console.log(`✅ SVG logo "${logo.name}" placed: ${targetWidth}x${targetHeight} (aspect ratio locked)`);
         } else {
           // Handle regular images (PNG, JPG, etc.)
           const imageHash = figma.createImage(logo.bytes).hash;
