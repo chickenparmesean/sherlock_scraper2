@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-// Use working REAL scraper that actually scrapes Sherlock data
-const { RealSherlockScraper } = require('./real-sherlock-scraper.js');
+// Use your actual working scraper from GitHub repo  
+const { WorkingSherlockScraper } = require('./working-sherlock-scraper.js');
 
 const app = express();
 const PORT = 5000;
@@ -30,8 +30,8 @@ app.use((req, res, next) => {
   }
 });
 
-// Initialize your REAL scraper
-const scraper = new RealSherlockScraper();
+// Initialize your actual working scraper
+const scraper = new WorkingSherlockScraper();
 
 console.log('🚀 Server starting with REAL Sherlock scraper...');
 console.log('✅ Logo API + REAL profile scraping both active');
