@@ -352,7 +352,7 @@
     </div>
     
     <div id="selectedLogos" class="selected-logos"></div>
-    <div class="field-help">Select up to 6 logos for the slide. Click to select/deselect.</div>
+    <div class="field-help">Select up to 3 logos for the slide. Click to select/deselect.</div>
   </div>
 
   <!-- Manual Content -->
@@ -655,18 +655,27 @@
         'http://localhost:5000'
       ];
       
+      console.log('🔍 Testing API endpoints for logos:', endpoints);
+      
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(`${endpoint}/api/scrape-profile?url=test`, { 
+          console.log(`🔗 Testing: ${endpoint}/api/logos`);
+          const response = await fetch(`${endpoint}/api/logos`, { 
             method: 'GET',
-            signal: AbortSignal.timeout(3000)
+            signal: AbortSignal.timeout(5000)
           });
-          if (response.ok || response.status === 400) return endpoint;
+          console.log(`📡 Response from ${endpoint}:`, response.status, response.ok);
+          if (response.ok) {
+            console.log(`✅ Using API host: ${endpoint}`);
+            return endpoint;
+          }
         } catch (e) {
+          console.log(`❌ Failed ${endpoint}:`, e.message);
           continue;
         }
       }
       
+      console.log('⚠️ Falling back to localhost');
       return 'http://localhost:5000';
     }
 
@@ -805,9 +814,9 @@
         // Deselect logo
         selectedLogos.splice(existingIndex, 1);
       } else {
-        // Select logo (max 6)
-        if (selectedLogos.length >= 6) {
-          showStatus('Maximum 6 logos allowed', 'error');
+        // Select logo (max 3)
+        if (selectedLogos.length >= 3) {
+          showStatus('Maximum 3 logos allowed', 'error');
           setTimeout(() => hideStatus(), 2000);
           return;
         }
