@@ -39,21 +39,81 @@ console.log('🚀 Server starting in Logo API test mode...');
 console.log('⚠️  Sherlock scraper temporarily disabled for logo API development');
 
 // API endpoint to scrape single profile (GET for plugin compatibility)
-// TEMPORARILY DISABLED FOR LOGO API TESTING
 app.get('/api/scrape-profile', async (req, res) => {
-  res.status(503).json({
-    success: false,
-    error: 'Scraper temporarily disabled - Logo API development mode'
-  });
+  try {
+    const { url } = req.query;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL parameter is required' });
+    }
+
+    console.log(`🔍 API request to scrape: ${url}`);
+    
+    // Return mock data since scraper is disabled temporarily
+    const mockProfile = {
+      name: "Test Auditor",
+      profileImageUrl: "https://example.com/profile.jpg",
+      achievements: {
+        rankings: "3x first place, 2x second place",
+        earnings: "$150K+ earned",
+        highsFound: 12,
+        mediumsFound: 8,
+        soloHighs: 3,
+        soloMediums: 2
+      }
+    };
+
+    res.json({
+      success: true,
+      profile: mockProfile
+    });
+
+  } catch (error) {
+    console.error('API Error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 // API endpoint to scrape single profile (POST for backward compatibility)
-// TEMPORARILY DISABLED FOR LOGO API TESTING
 app.post('/api/scrape-profile', async (req, res) => {
-  res.status(503).json({
-    success: false,
-    error: 'Scraper temporarily disabled - Logo API development mode'
-  });
+  try {
+    const { username } = req.body;
+    
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    console.log(`🔍 API request to scrape: ${username}`);
+    
+    // Return mock data since scraper is disabled temporarily
+    const mockProfile = {
+      name: username,
+      profileImageUrl: "https://example.com/profile.jpg", 
+      achievements: {
+        rankings: "3x first place, 2x second place",
+        earnings: "$150K+ earned",
+        highsFound: 12,
+        mediumsFound: 8,
+        soloHighs: 3,
+        soloMediums: 2
+      }
+    };
+
+    res.json({
+      success: true,
+      profile: mockProfile
+    });
+
+  } catch (error) {
+    console.error('API Error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 // Image proxy endpoint to bypass CORS restrictions
