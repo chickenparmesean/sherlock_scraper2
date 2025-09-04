@@ -219,28 +219,52 @@ async function placeLogosInSlide(slide, selectedLogos) {
       try {
         // Use logo bytes provided by iframe (no more fetching needed)
         console.log(`🔍 Placing logo: ${logo.name}, bytes: ${logo.bytes.length}`);
-        const imageHash = figma.createImage(logo.bytes).hash;
         
-        // Handle different container types
-        if (container.type === 'RECTANGLE' || container.type === 'ELLIPSE') {
-          container.fills = [{
-            type: 'IMAGE',
-            scaleMode: 'FIT',
-            imageHash: imageHash
-          }];
-          console.log(`✅ Placed logo "${logo.name}" in ${container.type} "${container.name}"`);
-        } else if (container.type === 'FRAME' || container.type === 'GROUP') {
-          // For frames/groups, try to find a child rectangle/ellipse to place the image
-          const childShape = findFirstImageContainer(container);
-          if (childShape) {
-            childShape.fills = [{
+        // Check if this is an SVG file (most protocol logos are SVGs)
+        const logoText = new TextDecoder().decode(logo.bytes.slice(0, 100));
+        const isSvg = logoText.includes('<svg') || logo.name.toLowerCase().endsWith('.svg');
+        
+        if (isSvg) {
+          // Handle SVG files using createNodeFromSvg
+          console.log(`📄 Logo is SVG, using createNodeFromSvg for: ${logo.name}`);
+          const svgString = new TextDecoder().decode(logo.bytes);
+          const svgNode = figma.createNodeFromSvg(svgString);
+          
+          // Position the SVG node over the container
+          svgNode.x = container.x;
+          svgNode.y = container.y;
+          svgNode.resize(container.width, container.height);
+          svgNode.name = `${logo.name} Logo`;
+          
+          // Add to the same parent as the container
+          container.parent.appendChild(svgNode);
+          
+          console.log(`✅ SVG logo "${logo.name}" placed successfully`);
+        } else {
+          // Handle regular images (PNG, JPG, etc.)
+          const imageHash = figma.createImage(logo.bytes).hash;
+        
+          // Handle different container types for regular images
+          if (container.type === 'RECTANGLE' || container.type === 'ELLIPSE') {
+            container.fills = [{
               type: 'IMAGE',
-              scaleMode: 'FIT', 
+              scaleMode: 'FIT',
               imageHash: imageHash
             }];
-            console.log(`✅ Placed logo "${logo.name}" in child shape of "${container.name}"`);
-          } else {
-            console.log(`⚠️ Could not find suitable child shape in "${container.name}"`);
+            console.log(`✅ Placed logo "${logo.name}" in ${container.type} "${container.name}"`);
+          } else if (container.type === 'FRAME' || container.type === 'GROUP') {
+            // For frames/groups, try to find a child rectangle/ellipse to place the image
+            const childShape = findFirstImageContainer(container);
+            if (childShape) {
+              childShape.fills = [{
+                type: 'IMAGE',
+                scaleMode: 'FIT', 
+                imageHash: imageHash
+              }];
+              console.log(`✅ Placed logo "${logo.name}" in child shape of "${container.name}"`);
+            } else {
+              console.log(`⚠️ Could not find suitable child shape in "${container.name}"`);
+            }
           }
         }
       } catch (logoError) {
