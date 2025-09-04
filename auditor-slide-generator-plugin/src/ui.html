@@ -412,10 +412,12 @@
           console.log('🖼️ Fetching profile image:', auditorData.profileImage);
           try {
             profileImageBytes = await fetchImageAsBytes(auditorData.profileImage);
-            console.log('✅ Profile image fetched successfully');
+            console.log('✅ Profile image fetched successfully, bytes length:', profileImageBytes ? profileImageBytes.length : 'null');
           } catch (error) {
             console.error('❌ Failed to fetch profile image:', error.message);
           }
+        } else {
+          console.log('⚠️ No profile image URL found in auditor data');
         }
 
         // Collect manual inputs

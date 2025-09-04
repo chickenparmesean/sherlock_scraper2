@@ -33,11 +33,14 @@ async function generateSlideFromData(data) {
     
     // Step 3: Replace profile image (if provided)
     if (data.auditorData.profileImageBytes) {
+      console.log('🖼️ Attempting to replace profile image, bytes length:', data.auditorData.profileImageBytes.length);
       await replaceProfileImage(newSlide, data.auditorData.profileImageBytes);
       figma.ui.postMessage({ 
         type: 'slide-progress', 
         data: { step: 'profile-image-replaced' }
       });
+    } else {
+      console.log('⚠️ No profile image bytes provided to main thread');
     }
     
     // Step 4: Place logos (if provided)
