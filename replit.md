@@ -215,3 +215,56 @@ The system provides a complete end-to-end solution for professional auditor slid
 - ✅ Network access configuration for external API calls
 
 The plugin provides full write permissions for Figma file manipulation, solving the REST API limitations and enabling complete automation of slide generation directly within Figma.
+
+## Corrected Figma Plugin Implementation (Final)
+
+**September 04, 2025**: Rebuilt Figma plugin with proper iframe + main thread architecture for browser compatibility:
+
+**Correct Plugin Architecture (`auditor-slide-generator-plugin/`):**
+- ✅ **Main Thread Code** (`src/code.js`): Handles only Figma document manipulation (duplicate frames, update text, replace images)
+- ✅ **iframe UI** (`src/ui.html`): Handles external API calls, user interface, and image processing
+- ✅ **Message Passing System**: Proper communication between main thread and iframe using `figma.ui.postMessage`
+- ✅ **Browser Compatible**: Works in Figma browser (no desktop app required)
+- ✅ **Clean Architecture**: No webpack or complex build system needed
+
+**Division of Responsibilities:**
+
+**Main Thread (`code.js`) - Figma Operations Only:**
+- Template frame duplication with timestamp naming
+- Text layer updates using naming conventions
+- Profile image replacement in Figma nodes
+- Logo placement in image containers
+- Template structure analysis
+- Figma document manipulation
+
+**iframe UI (`ui.html`) - External Operations:**
+- Sherlock scraper API calls for auditor data
+- Image fetching and processing (profile pictures)
+- User interface and form handling
+- Progress tracking and status updates
+- All external network requests
+
+**Message Flow:**
+1. User interacts with iframe UI
+2. iframe fetches external data (Sherlock API, images)
+3. iframe sends processed data to main thread
+4. Main thread performs Figma document operations
+5. Main thread sends progress/results back to iframe
+
+**Key Features:**
+- ✅ Automated auditor data fetching from Sherlock Protocol
+- ✅ Smart text layer mapping with achievement generation
+- ✅ Profile image replacement with external image fetching
+- ✅ Template analysis tools for debugging
+- ✅ Real-time progress tracking during slide generation
+- ✅ Complete error handling and user feedback
+
+**Installation & Usage:**
+1. Open Figma in browser
+2. Go to Plugins → Development → Import plugin from manifest...
+3. Select `manifest.json` from plugin directory
+4. Plugin appears as "Auditor Slide Generator"
+5. Create slide template with proper layer naming
+6. Use plugin to generate automated slides
+
+The plugin now uses the correct Figma plugin architecture with proper separation between main thread Figma operations and iframe external API calls.

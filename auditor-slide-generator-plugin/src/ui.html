@@ -17,7 +17,6 @@
       font-size: 12px;
       line-height: 1.4;
       color: #333;
-      overflow-x: hidden;
     }
 
     .header {
@@ -60,25 +59,8 @@
       gap: 8px;
     }
 
-    .section h2 .icon {
-      font-size: 16px;
-    }
-
-    .collapsible {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .collapsible.collapsed + .section-content {
-      display: none;
-    }
-
     .input-group {
       margin-bottom: 12px;
-    }
-
-    .input-group:last-child {
-      margin-bottom: 0;
     }
 
     label {
@@ -89,11 +71,7 @@
       color: #666;
     }
 
-    .label-required {
-      color: #e74c3c;
-    }
-
-    input[type="text"], input[type="url"], textarea, select {
+    input[type="text"], input[type="url"], textarea {
       width: 100%;
       padding: 8px 10px;
       border: 1px solid #ddd;
@@ -104,7 +82,7 @@
       transition: border-color 0.2s;
     }
 
-    input[type="text"]:focus, input[type="url"]:focus, textarea:focus, select:focus {
+    input:focus, textarea:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
@@ -113,17 +91,6 @@
     textarea {
       resize: vertical;
       min-height: 60px;
-      line-height: 1.3;
-    }
-
-    .textarea-large {
-      min-height: 80px;
-    }
-
-    .field-help {
-      font-size: 10px;
-      color: #888;
-      margin-top: 2px;
     }
 
     .btn {
@@ -151,28 +118,12 @@
 
     .btn-secondary {
       background: #6c757d;
-      font-size: 11px;
       padding: 8px 12px;
-      margin-top: 4px;
+      font-size: 11px;
     }
 
     .btn-secondary:hover {
       background: #5a6268;
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 10px;
-      width: auto;
-      margin: 0;
-    }
-
-    .btn-danger {
-      background: #dc3545;
-    }
-
-    .btn-danger:hover {
-      background: #c82333;
     }
 
     .button-row {
@@ -211,6 +162,47 @@
       border: 1px solid #f5c6cb;
     }
 
+    .field-help {
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .template-info {
+      background: #e8f5e8;
+      border: 1px solid #4caf50;
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 12px;
+      font-size: 10px;
+    }
+
+    .template-name {
+      font-weight: 600;
+      color: #2e7d32;
+    }
+
+    .analysis-result {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 10px;
+    }
+
+    .analysis-item {
+      background: white;
+      padding: 6px 8px;
+      margin: 4px 0;
+      border-radius: 3px;
+      border-left: 3px solid #667eea;
+    }
+
+    .hidden {
+      display: none;
+    }
+
     .progress-bar {
       width: 100%;
       height: 4px;
@@ -226,326 +218,81 @@
       width: 0%;
       transition: width 0.3s ease;
     }
-
-    .logo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .logo-item {
-      border: 2px solid #e5e5e5;
-      border-radius: 6px;
-      padding: 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: white;
-    }
-
-    .logo-item:hover {
-      border-color: #667eea;
-    }
-
-    .logo-item.selected {
-      border-color: #667eea;
-      background: #f0f4ff;
-    }
-
-    .logo-item img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      margin-bottom: 4px;
-    }
-
-    .logo-item .name {
-      font-size: 9px;
-      color: #666;
-      word-break: break-word;
-    }
-
-    .logo-upload {
-      border: 2px dashed #ddd;
-      border-radius: 6px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .logo-upload:hover {
-      border-color: #667eea;
-    }
-
-    .logo-upload.dragover {
-      border-color: #667eea;
-      background: #f0f4ff;
-    }
-
-    .analysis-result {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 10px;
-      margin-top: 8px;
-      font-size: 10px;
-    }
-
-    .analysis-result h4 {
-      font-size: 11px;
-      margin-bottom: 6px;
-      color: #495057;
-    }
-
-    .analysis-item {
-      background: white;
-      padding: 6px 8px;
-      margin: 4px 0;
-      border-radius: 3px;
-      border-left: 3px solid #667eea;
-    }
-
-    .analysis-item strong {
-      color: #333;
-    }
-
-    .analysis-item em {
-      color: #666;
-      font-size: 9px;
-    }
-
-    .search-box {
-      position: relative;
-      margin-bottom: 12px;
-    }
-
-    .search-box input {
-      padding-left: 30px;
-    }
-
-    .search-box .search-icon {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #999;
-      font-size: 12px;
-    }
-
-    .layout-selector {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .layout-option {
-      flex: 1;
-      padding: 8px;
-      border: 2px solid #e5e5e5;
-      border-radius: 4px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 10px;
-    }
-
-    .layout-option:hover {
-      border-color: #667eea;
-    }
-
-    .layout-option.selected {
-      border-color: #667eea;
-      background: #f0f4ff;
-      color: #667eea;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .template-info {
-      background: #e8f5e8;
-      border: 1px solid #4caf50;
-      border-radius: 4px;
-      padding: 8px;
-      margin-bottom: 12px;
-      font-size: 10px;
-    }
-
-    .template-info .template-name {
-      font-weight: 600;
-      color: #2e7d32;
-    }
-
-    .examples {
-      background: #e8f4f8;
-      padding: 8px;
-      border-radius: 4px;
-      margin-top: 6px;
-      font-size: 10px;
-      color: #2c3e50;
-    }
-
-    .examples strong {
-      color: #1a1a2e;
-    }
-
-    .logo-counter {
-      background: #667eea;
-      color: white;
-      border-radius: 12px;
-      padding: 2px 8px;
-      font-size: 10px;
-      margin-left: 8px;
-    }
   </style>
 </head>
 <body>
   <div class="header">
     <h1>🎨 Auditor Slide Generator</h1>
-    <p>Professional slides with Sherlock data + custom content</p>
+    <p>Automated slides with Sherlock data</p>
   </div>
 
-  <!-- Template Setup Section -->
+  <!-- Template Setup -->
   <div class="section">
-    <h2 class="collapsible">
-      <span class="icon">📋</span>
-      Template Setup
-    </h2>
-    <div class="section-content">
-      <div id="templateInfo" class="template-info hidden">
-        Template: <span class="template-name" id="templateName">None selected</span>
-      </div>
-      
-      <p class="field-help" style="margin-bottom: 12px;">
-        Select a frame to use as your slide template, then analyze its structure.
-      </p>
-      
-      <div class="button-row">
-        <button class="btn btn-secondary" onclick="setTemplate()">
-          Set Template
-        </button>
-        <button class="btn btn-secondary" onclick="analyzeTemplate()">
-          Analyze Template
-        </button>
-      </div>
-      
-      <div id="templateAnalysis" class="hidden">
-        <!-- Template analysis results will appear here -->
-      </div>
+    <h2>📋 Template Setup</h2>
+    
+    <div id="templateInfo" class="template-info hidden">
+      Template: <span class="template-name" id="templateName">None selected</span>
     </div>
-  </div>
-
-  <!-- Auditor & Protocol Section -->
-  <div class="section">
-    <h2 class="collapsible">
-      <span class="icon">👤</span>
-      Auditor & Protocol
-    </h2>
-    <div class="section-content">
-      <div class="input-group">
-        <label for="auditorUrl">Auditor Profile URL <span class="label-required">*</span></label>
-        <input type="url" id="auditorUrl" placeholder="https://audits.sherlock.xyz/watson/berndartmueller" />
-        <div class="field-help">Paste the full Sherlock profile URL to auto-fill auditor data</div>
-        <div class="examples">
-          <strong>Example:</strong> https://audits.sherlock.xyz/watson/berndartmueller
-        </div>
-        <button class="btn btn-secondary" onclick="testScraper()" style="margin-top: 8px;">
-          Test Auditor Data
-        </button>
-      </div>
-
-      <div class="input-group">
-        <label for="protocolName">Protocol Name <span class="label-required">*</span></label>
-        <input type="text" id="protocolName" placeholder="e.g., Aave, Compound, Uniswap" />
-        <div class="field-help">Used in slide title and throughout content</div>
-      </div>
+    
+    <div class="button-row">
+      <button class="btn btn-secondary" onclick="setTemplate()">Set Template</button>
+      <button class="btn btn-secondary" onclick="analyzeTemplate()">Analyze</button>
     </div>
+    
+    <div id="templateAnalysis" class="hidden"></div>
   </div>
 
-  <!-- Logo Selection Section -->
+  <!-- Auditor & Protocol -->
   <div class="section">
-    <h2 class="collapsible">
-      <span class="icon">🏢</span>
-      Logo Selection
-      <span class="logo-counter" id="logoCounter">0 selected</span>
-    </h2>
-    <div class="section-content">
-      <div class="input-group">
-        <label>Logo Layout</label>
-        <div class="layout-selector">
-          <div class="layout-option selected" data-layout="3" onclick="selectLayout('3')">
-            3 Logos
-          </div>
-          <div class="layout-option" data-layout="4" onclick="selectLayout('4')">
-            4 Logos
-          </div>
-          <div class="layout-option" data-layout="6" onclick="selectLayout('6')">
-            6 Logos
-          </div>
-        </div>
-      </div>
-
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="logoSearch" placeholder="Search logos..." oninput="filterLogos()" />
-      </div>
-
-      <div class="logo-upload" onclick="uploadLogo()" ondrop="handleLogoDrop(event)" ondragover="handleLogoDragOver(event)" ondragleave="handleLogoDragLeave(event)">
-        <div>📁 Upload New Logo</div>
-        <div class="field-help">Click to upload or drag & drop PNG/SVG files</div>
-      </div>
-
-      <div class="logo-grid" id="logoGrid">
-        <!-- Logos will be populated here -->
-      </div>
+    <h2>👤 Auditor & Protocol</h2>
+    
+    <div class="input-group">
+      <label for="auditorUrl">Auditor Profile URL *</label>
+      <input type="url" id="auditorUrl" placeholder="https://audits.sherlock.xyz/watson/berndartmueller" />
+      <div class="field-help">Full Sherlock profile URL for data fetching</div>
     </div>
+
+    <div class="input-group">
+      <label for="protocolName">Protocol Name *</label>
+      <input type="text" id="protocolName" placeholder="e.g., Aave, Compound" />
+      <div class="field-help">Used in slide title and content</div>
+    </div>
+    
+    <button class="btn btn-secondary" onclick="testAuditorData()">Test Auditor Data</button>
   </div>
 
-  <!-- Manual Content Section -->
+  <!-- Manual Content -->
   <div class="section">
-    <h2 class="collapsible">
-      <span class="icon">✏️</span>
-      Custom Content
-    </h2>
-    <div class="section-content">
-      <div class="input-group">
-        <label for="subheading">Auditor Subheading</label>
-        <input type="text" id="subheading" placeholder="e.g., Security Expert, Leading DeFi Auditor" />
-        <div class="field-help">Brief tagline about the auditor</div>
-      </div>
+    <h2>✏️ Custom Content</h2>
+    
+    <div class="input-group">
+      <label for="subheading">Auditor Subheading</label>
+      <input type="text" id="subheading" placeholder="Security Expert, Leading DeFi Auditor" />
+    </div>
 
-      <div class="input-group">
-        <label for="description">Auditor Description</label>
-        <textarea id="description" class="textarea-large" placeholder="Write a comprehensive bio highlighting the auditor's expertise, background, and key achievements..."></textarea>
-        <div class="field-help">Detailed description of auditor's background and expertise</div>
-      </div>
+    <div class="input-group">
+      <label for="description">Auditor Description</label>
+      <textarea id="description" placeholder="Comprehensive bio highlighting expertise..."></textarea>
+    </div>
 
-      <div class="input-group">
-        <label for="achievement4">Additional Achievement</label>
-        <textarea id="achievement4" placeholder="e.g., Critical Bug Bounty submissions for major protocols..."></textarea>
-        <div class="field-help">Fourth achievement line (1-3 are auto-filled from Sherlock)</div>
-      </div>
+    <div class="input-group">
+      <label for="achievement4">Additional Achievement</label>
+      <textarea id="achievement4" placeholder="Critical Bug Bounty submissions..."></textarea>
+    </div>
 
-      <div class="input-group">
-        <label for="goodfit1">Why Great Fit - Point 1</label>
-        <textarea id="goodfit1" placeholder="e.g., Deep expertise in yield farming protocols and governance mechanisms..."></textarea>
-        <div class="field-help">First reason why this auditor is perfect for the protocol</div>
-      </div>
+    <div class="input-group">
+      <label for="goodfit1">Why Great Fit - Point 1</label>
+      <textarea id="goodfit1" placeholder="Deep expertise in yield farming protocols..."></textarea>
+    </div>
 
-      <div class="input-group">
-        <label for="goodfit2">Why Great Fit - Point 2</label>
-        <textarea id="goodfit2" placeholder="e.g., Proven track record with similar protocol architectures..."></textarea>
-        <div class="field-help">Second reason why this auditor is perfect for the protocol</div>
-      </div>
+    <div class="input-group">
+      <label for="goodfit2">Why Great Fit - Point 2</label>
+      <textarea id="goodfit2" placeholder="Proven track record with similar architectures..."></textarea>
+    </div>
 
-      <div class="input-group">
-        <label for="goodfit3">Why Great Fit - Point 3</label>
-        <textarea id="goodfit3" placeholder="e.g., Experience finding critical vulnerabilities in complex smart contract systems..."></textarea>
-        <div class="field-help">Third reason why this auditor is perfect for the protocol</div>
-      </div>
+    <div class="input-group">
+      <label for="goodfit3">Why Great Fit - Point 3</label>
+      <textarea id="goodfit3" placeholder="Experience finding critical vulnerabilities..."></textarea>
     </div>
   </div>
 
@@ -561,11 +308,330 @@
       </div>
     </div>
     
-    <div id="status" class="hidden">
-      <!-- Status messages will appear here -->
-    </div>
+    <div id="status" class="hidden"></div>
   </div>
 
-  <script src="ui.js"></script>
+  <script>
+    // iframe UI State
+    let currentAuditorData = null;
+    let isGenerating = false;
+
+    // Message passing to main thread
+    function postToMain(message) {
+      parent.postMessage({ pluginMessage: message }, '*');
+    }
+
+    // Handle messages from main thread
+    window.onmessage = (event) => {
+      const { type, data, message } = event.data.pluginMessage || {};
+
+      switch (type) {
+        case 'template-set':
+          handleTemplateSet(data);
+          break;
+          
+        case 'template-analysis':
+          handleTemplateAnalysis(data);
+          break;
+          
+        case 'slide-progress':
+          handleSlideProgress(data);
+          break;
+          
+        case 'slide-generated':
+          handleSlideGenerated(data);
+          break;
+          
+        case 'error':
+          showStatus(message, 'error');
+          break;
+          
+        default:
+          console.log('Unknown message from main thread:', type);
+      }
+    };
+
+    // Template functions
+    function setTemplate() {
+      postToMain({ type: 'set-template' });
+    }
+
+    function analyzeTemplate() {
+      showStatus('Analyzing template...', 'loading');
+      postToMain({ type: 'analyze-template' });
+    }
+
+    function handleTemplateSet(data) {
+      if (data.success) {
+        showTemplateInfo(data.templateName);
+        showStatus('Template set successfully!', 'success');
+      } else {
+        showStatus(data.error, 'error');
+      }
+    }
+
+    function handleTemplateAnalysis(data) {
+      if (data.success) {
+        displayTemplateAnalysis(data.analysis);
+        hideStatus();
+      } else {
+        showStatus(data.error, 'error');
+      }
+    }
+
+    // Auditor data functions
+    async function testAuditorData() {
+      const auditorUrl = document.getElementById('auditorUrl').value.trim();
+      if (!auditorUrl) {
+        showStatus('Please enter an auditor URL', 'error');
+        return;
+      }
+
+      showStatus('Testing auditor data...', 'loading');
+      
+      try {
+        const auditorData = await fetchAuditorData(auditorUrl);
+        currentAuditorData = auditorData;
+        showStatus(`✅ Found: ${auditorData.name}, ${auditorData.achievements?.earnings || 'N/A'} earnings`, 'success');
+      } catch (error) {
+        showStatus(`Failed to fetch auditor data: ${error.message}`, 'error');
+      }
+    }
+
+    // Main slide generation
+    async function generateSlide() {
+      if (isGenerating) return;
+
+      const auditorUrl = document.getElementById('auditorUrl').value.trim();
+      const protocolName = document.getElementById('protocolName').value.trim();
+
+      if (!auditorUrl || !protocolName) {
+        showStatus('Please fill in Auditor URL and Protocol Name', 'error');
+        return;
+      }
+
+      isGenerating = true;
+      updateGenerateButton(true);
+      showProgress(0);
+
+      try {
+        showStatus('Fetching auditor data...', 'loading');
+        
+        // Fetch auditor data and profile image
+        const auditorData = await fetchAuditorData(auditorUrl);
+        const profileImageBytes = auditorData.profileImageUrl ? 
+          await fetchImageAsBytes(auditorData.profileImageUrl) : null;
+        
+        if (profileImageBytes) {
+          auditorData.profileImageBytes = profileImageBytes;
+        }
+
+        // Collect manual inputs
+        const manualInputs = {
+          subheading: document.getElementById('subheading').value.trim(),
+          description: document.getElementById('description').value.trim(),
+          achievement4: document.getElementById('achievement4').value.trim(),
+          goodfit1: document.getElementById('goodfit1').value.trim(),
+          goodfit2: document.getElementById('goodfit2').value.trim(),
+          goodfit3: document.getElementById('goodfit3').value.trim()
+        };
+
+        // Send to main thread for slide generation
+        postToMain({
+          type: 'generate-slide',
+          data: {
+            auditorData,
+            manualInputs,
+            protocolName
+          }
+        });
+
+      } catch (error) {
+        showStatus(`Failed to generate slide: ${error.message}`, 'error');
+        updateGenerateButton(false);
+        hideProgress();
+        isGenerating = false;
+      }
+    }
+
+    // Handle slide generation progress
+    function handleSlideProgress(data) {
+      const stepMessages = {
+        'template-validated': 'Template validated...',
+        'frame-duplicated': 'Frame duplicated...',
+        'text-updated': 'Text layers updated...',
+        'profile-image-replaced': 'Profile image replaced...',
+        'logos-placed': 'Logos placed...'
+      };
+      
+      const message = stepMessages[data.step] || 'Processing...';
+      showStatus(message, 'loading');
+      
+      const progress = {
+        'template-validated': 20,
+        'frame-duplicated': 40,
+        'text-updated': 60,
+        'profile-image-replaced': 80,
+        'logos-placed': 90
+      };
+      
+      showProgress(progress[data.step] || 50);
+    }
+
+    function handleSlideGenerated(data) {
+      if (data.success) {
+        showStatus(data.message, 'success');
+        showProgress(100);
+      } else {
+        showStatus(`Generation failed: ${data.error}`, 'error');
+        hideProgress();
+      }
+      
+      updateGenerateButton(false);
+      isGenerating = false;
+    }
+
+    // External API functions (run in iframe)
+    async function fetchAuditorData(auditorUrl) {
+      const username = extractUsernameFromUrl(auditorUrl);
+      if (!username) {
+        throw new Error('Invalid Sherlock URL');
+      }
+
+      const apiHost = await getApiHost();
+      const response = await fetch(`${apiHost}/api/scrape-profile`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, url: auditorUrl })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to scrape auditor data');
+      }
+
+      return data.profile;
+    }
+
+    async function fetchImageAsBytes(url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      return new Uint8Array(arrayBuffer);
+    }
+
+    function extractUsernameFromUrl(url) {
+      const match = url.match(/sherlock\.xyz\/watson\/([^\/\?]+)/);
+      return match ? match[1] : null;
+    }
+
+    async function getApiHost() {
+      const endpoints = ['http://localhost:5000'];
+      
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(`${endpoint}/api/test`, { 
+            method: 'GET',
+            signal: AbortSignal.timeout(3000)
+          });
+          if (response.ok) return endpoint;
+        } catch (e) {
+          continue;
+        }
+      }
+      
+      return 'http://localhost:5000';
+    }
+
+    // UI helper functions
+    function showTemplateInfo(templateName) {
+      const info = document.getElementById('templateInfo');
+      const nameSpan = document.getElementById('templateName');
+      if (info && nameSpan) {
+        nameSpan.textContent = templateName;
+        info.classList.remove('hidden');
+      }
+    }
+
+    function displayTemplateAnalysis(analysis) {
+      const container = document.getElementById('templateAnalysis');
+      if (!container) return;
+      
+      let html = `
+        <div class="analysis-result">
+          <h4>📋 ${analysis.frameName}</h4>
+          
+          <div style="margin: 8px 0;">
+            <strong>📝 Text Layers (${analysis.textNodes.length}):</strong>
+            ${analysis.textNodes.slice(0, 5).map(node => `
+              <div class="analysis-item">
+                <strong>${node.name}</strong><br>
+                <em>"${node.content.slice(0, 30)}..."</em>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div style="margin: 8px 0;">
+            <strong>🖼️ Image Containers (${analysis.imageNodes.length}):</strong>
+            ${analysis.imageNodes.map(node => `
+              <div class="analysis-item">${node.name} (${node.type})</div>
+            `).join('')}
+          </div>
+          
+          <div style="margin: 8px 0;">
+            <strong>🏢 Logo Containers (${analysis.logoNodes.length}):</strong>
+            ${analysis.logoNodes.map(node => `
+              <div class="analysis-item">${node.name} (${node.type})</div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      container.innerHTML = html;
+      container.classList.remove('hidden');
+    }
+
+    function showStatus(message, type) {
+      const statusEl = document.getElementById('status');
+      if (statusEl) {
+        statusEl.className = `status ${type}`;
+        statusEl.textContent = message;
+        statusEl.classList.remove('hidden');
+      }
+    }
+
+    function hideStatus() {
+      document.getElementById('status').classList.add('hidden');
+    }
+
+    function updateGenerateButton(disabled) {
+      const btn = document.getElementById('generateBtn');
+      if (btn) {
+        btn.disabled = disabled;
+        btn.textContent = disabled ? '🔄 Generating...' : '🎨 Generate Slide';
+      }
+    }
+
+    function showProgress(percent) {
+      const container = document.getElementById('progressContainer');
+      const fill = document.getElementById('progressFill');
+      if (container && fill) {
+        container.classList.remove('hidden');
+        fill.style.width = `${percent}%`;
+      }
+    }
+
+    function hideProgress() {
+      document.getElementById('progressContainer').classList.add('hidden');
+    }
+
+    console.log('🎨 Auditor Slide Generator UI loaded');
+  </script>
 </body>
 </html>
