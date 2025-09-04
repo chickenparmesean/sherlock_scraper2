@@ -505,16 +505,12 @@
           goodfit3: document.getElementById('goodfit3').value.trim()
         };
 
-        // Fetch logo images through our proxy server (like profile images)
+        // Fetch logo images directly from GitHub (now allowed in manifest.json)
         const logoImageBytes = [];
         for (const logo of selectedLogos) {
           try {
-            console.log(`🔍 Fetching logo for slide: ${logo.name}`);
-            // Use our Replit server to proxy the GitHub logo (avoids CSP issues)
-            const proxiedLogoUrl = `${API_HOST}/api/proxy-image?url=${encodeURIComponent(logo.url)}`;
-            console.log(`🔄 Proxied logo URL: ${proxiedLogoUrl}`);
-            
-            const logoResponse = await fetch(proxiedLogoUrl);
+            console.log(`🔍 Fetching logo for slide: ${logo.name} from ${logo.url}`);
+            const logoResponse = await fetch(logo.url);
             if (logoResponse.ok) {
               const logoBytes = new Uint8Array(await logoResponse.arrayBuffer());
               logoImageBytes.push({

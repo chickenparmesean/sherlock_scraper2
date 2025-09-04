@@ -13,13 +13,14 @@
   "networkAccess": {
     "allowedDomains": [
       "https://audits.sherlock.xyz",
-      "https://sherlock-files.ams3.digitaloceanspaces.com",
+      "https://sherlock-files.ams3.digitaloceanspaces.com", 
       "https://*.replit.dev",
-      "https://*.repl.co"
+      "https://*.repl.co",
+      "https://raw.githubusercontent.com"
     ],
     "devAllowedDomains": [
       "http://localhost:5000"
     ],
-    "reasoning": "This plugin needs network access to fetch auditor profile data from Sherlock Protocol API and download profile images for automated slide generation."
+    "reasoning": "This plugin needs network access to fetch auditor profile data from Sherlock Protocol API, download profile images for automated slide generation, and fetch protocol logos from GitHub."
   }
 }
