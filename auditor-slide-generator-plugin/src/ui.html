@@ -423,7 +423,13 @@
       showProgress(0);
 
       try {
-        showStatus('Fetching auditor data...', 'loading');
+        // Quick debug check
+        const g1 = document.getElementById('goodfit1');
+        const g2 = document.getElementById('goodfit2');  
+        const g3 = document.getElementById('goodfit3');
+        const debugInfo = `g1:${g1 ? (g1.value ? 'filled' : 'empty') : 'missing'} g2:${g2 ? (g2.value ? 'filled' : 'empty') : 'missing'} g3:${g3 ? (g3.value ? 'filled' : 'empty') : 'missing'}`;
+        
+        showStatus(`Fetching auditor data... [${debugInfo}]`, 'loading');
         
         // Fetch auditor data and profile image
         const auditorData = await fetchAuditorData(auditorUrl);
@@ -432,15 +438,29 @@
         console.log('🚫 Skipping profile image fetch for debugging');
         // TODO: Re-enable image fetching once slide generation works
 
-        // Collect manual inputs
+        // Collect manual inputs with debugging
+        const goodfit1El = document.getElementById('goodfit1');
+        const goodfit2El = document.getElementById('goodfit2');  
+        const goodfit3El = document.getElementById('goodfit3');
+        
+        console.log('🔍 Form field debugging:');
+        console.log('goodfit1 element exists:', !!goodfit1El);
+        console.log('goodfit1 value:', goodfit1El ? `"${goodfit1El.value}"` : 'null');
+        console.log('goodfit2 element exists:', !!goodfit2El);
+        console.log('goodfit2 value:', goodfit2El ? `"${goodfit2El.value}"` : 'null');
+        console.log('goodfit3 element exists:', !!goodfit3El);
+        console.log('goodfit3 value:', goodfit3El ? `"${goodfit3El.value}"` : 'null');
+        
         const manualInputs = {
           subheading: document.getElementById('subheading').value.trim(),
           description: document.getElementById('description').value.trim(),
           achievement4: document.getElementById('achievement4').value.trim(),
-          goodfit1: document.getElementById('goodfit1').value.trim(),
-          goodfit2: document.getElementById('goodfit2').value.trim(),
-          goodfit3: document.getElementById('goodfit3').value.trim()
+          goodfit1: goodfit1El ? goodfit1El.value.trim() : '',
+          goodfit2: goodfit2El ? goodfit2El.value.trim() : '',
+          goodfit3: goodfit3El ? goodfit3El.value.trim() : ''
         };
+        
+        console.log('📋 Final manual inputs:', manualInputs);
 
         // Send to main thread for slide generation
         postToMain({
