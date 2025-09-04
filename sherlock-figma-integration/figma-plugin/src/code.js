@@ -92,10 +92,10 @@ function findTemplateFrame() {
 async function duplicateTemplateFrame(template, protocolName, auditorName) {
   const newFrame = template.clone();
   
-  // Generate timestamp and name
+  // Generate date and name
   const now = new Date();
-  const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 16);
-  newFrame.name = `${timestamp} ${protocolName} ${auditorName}`;
+  const date = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+  newFrame.name = `${date} | ${protocolName} | ${auditorName}`;
   
   // Position next to template
   newFrame.x = template.x + template.width + 100;
