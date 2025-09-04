@@ -505,6 +505,27 @@
           goodfit3: document.getElementById('goodfit3').value.trim()
         };
 
+        // Fetch logo images and convert to bytes
+        const logoImageBytes = [];
+        for (const logo of selectedLogos) {
+          try {
+            console.log(`🔍 Fetching logo for slide: ${logo.name} from ${logo.url}`);
+            const logoResponse = await fetch(logo.url);
+            if (logoResponse.ok) {
+              const logoBytes = new Uint8Array(await logoResponse.arrayBuffer());
+              logoImageBytes.push({
+                name: logo.name,
+                bytes: logoBytes
+              });
+              console.log(`✅ Logo fetched: ${logo.name}, bytes: ${logoBytes.length}`);
+            } else {
+              console.error(`❌ Failed to fetch logo ${logo.name}: ${logoResponse.status}`);
+            }
+          } catch (logoError) {
+            console.error(`❌ Error fetching logo ${logo.name}:`, logoError);
+          }
+        }
+
         // Send to main thread for slide generation
         postToMain({
           type: 'generate-slide',
@@ -515,7 +536,7 @@
             },
             manualInputs,
             protocolName,
-            selectedLogos: selectedLogos
+            selectedLogos: logoImageBytes  // Send bytes instead of URLs
           }
         });
 

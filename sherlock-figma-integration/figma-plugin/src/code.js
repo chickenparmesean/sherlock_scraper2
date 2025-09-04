@@ -217,15 +217,9 @@ async function placeLogosInSlide(slide, selectedLogos) {
       const logo = selectedLogos[i];
       
       try {
-        // Fetch logo image from GitHub URL
-        console.log(`🔍 Fetching logo: ${logo.name} from ${logo.url}`);
-        const response = await fetch(logo.url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch logo: ${response.status}`);
-        }
-        
-        const imageBytes = new Uint8Array(await response.arrayBuffer());
-        const imageHash = figma.createImage(imageBytes).hash;
+        // Use logo bytes provided by iframe (no more fetching needed)
+        console.log(`🔍 Placing logo: ${logo.name}, bytes: ${logo.bytes.length}`);
+        const imageHash = figma.createImage(logo.bytes).hash;
         
         // Handle different container types
         if (container.type === 'RECTANGLE' || container.type === 'ELLIPSE') {
