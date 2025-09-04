@@ -206,7 +206,11 @@ async function replaceProfileImage(slide, imageBytes) {
 // Place logos in slide
 async function placeLogosInSlide(slide, selectedLogos) {
   try {
+    console.log(`🎯 LOGO DEBUG: Attempting to place ${selectedLogos.length} logos`);
+    console.log(`🎯 LOGO DEBUG: Selected logos:`, selectedLogos);
+    
     const logoContainers = findLogoContainers(slide, selectedLogos.length);
+    console.log(`🎯 LOGO DEBUG: Found ${logoContainers.length} logo containers:`, logoContainers.map(c => c.name));
     
     for (let i = 0; i < Math.min(selectedLogos.length, logoContainers.length); i++) {
       const container = logoContainers[i];
