@@ -570,6 +570,7 @@
             
             // Fetch signature image through proxy
             console.log(`🖼️ Fetching signature: ${selectedSignature.name}`);
+            const apiHost = await getApiHost();
             const signatureResponse = await fetch(`${apiHost}/api/proxy-image?url=${encodeURIComponent(selectedSignature.url)}`);
             if (signatureResponse.ok) {
               const signatureBytes = new Uint8Array(await signatureResponse.arrayBuffer());
