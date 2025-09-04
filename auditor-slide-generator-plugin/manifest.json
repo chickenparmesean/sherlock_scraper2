@@ -11,8 +11,8 @@
   ],
   "networkAccess": {
     "allowedDomains": [
-      "https://audits.sherlock.xyz",
-      "https://sherlock-files.ams3.digitaloceanspaces.com",
+      "audits.sherlock.xyz",
+      "sherlock-files.ams3.digitaloceanspaces.com",
       "*.replit.dev",
       "*.repl.co"
     ],
