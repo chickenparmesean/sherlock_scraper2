@@ -419,11 +419,19 @@
         
         // Fetch auditor data and profile image
         const auditorData = await fetchAuditorData(auditorUrl);
-        const profileImageBytes = auditorData.profileImageUrl ? 
-          await fetchImageAsBytes(auditorData.profileImageUrl) : null;
         
-        if (profileImageBytes) {
-          auditorData.profileImageBytes = profileImageBytes;
+        // Try to fetch profile image, but don't fail if it doesn't work
+        let profileImageBytes = null;
+        if (auditorData.profileImageUrl) {
+          try {
+            profileImageBytes = await fetchImageAsBytes(auditorData.profileImageUrl);
+            auditorData.profileImageBytes = profileImageBytes;
+            console.log('✅ Profile image fetched successfully');
+          } catch (error) {
+            console.warn('⚠️  Profile image fetch failed:', error.message);
+            console.log('Continuing slide generation without profile image');
+            // Don't fail the entire generation just because image fetch failed
+          }
         }
 
         // Collect manual inputs
@@ -515,9 +523,13 @@
     }
 
     async function fetchImageAsBytes(url) {
-      const response = await fetch(url);
+      console.log('🖼️  Attempting to fetch image from:', url);
+      const response = await fetch(url, {
+        mode: 'cors',
+        credentials: 'omit'
+      });
       if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.status}`);
+        throw new Error(`Failed to fetch image: ${response.status} - ${response.statusText}`);
       }
       const arrayBuffer = await response.arrayBuffer();
       return new Uint8Array(arrayBuffer);
