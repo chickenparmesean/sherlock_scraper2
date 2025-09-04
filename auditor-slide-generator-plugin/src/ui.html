@@ -401,13 +401,7 @@
       showProgress(0);
 
       try {
-        // Quick debug check
-        const g1 = document.getElementById('goodfit1');
-        const g2 = document.getElementById('goodfit2');  
-        const g3 = document.getElementById('goodfit3');
-        const debugInfo = `g1:${g1 ? (g1.value ? 'filled' : 'empty') : 'missing'} g2:${g2 ? (g2.value ? 'filled' : 'empty') : 'missing'} g3:${g3 ? (g3.value ? 'filled' : 'empty') : 'missing'}`;
-        
-        showStatus(`Fetching auditor data... [${debugInfo}]`, 'loading');
+        showStatus('Fetching auditor data...', 'loading');
         
         // Fetch auditor data and profile image
         const auditorData = await fetchAuditorData(auditorUrl);
@@ -424,29 +418,15 @@
           }
         }
 
-        // Collect manual inputs with debugging
-        const goodfit1El = document.getElementById('goodfit1');
-        const goodfit2El = document.getElementById('goodfit2');  
-        const goodfit3El = document.getElementById('goodfit3');
-        
-        console.log('🔍 Form field debugging:');
-        console.log('goodfit1 element exists:', !!goodfit1El);
-        console.log('goodfit1 value:', goodfit1El ? `"${goodfit1El.value}"` : 'null');
-        console.log('goodfit2 element exists:', !!goodfit2El);
-        console.log('goodfit2 value:', goodfit2El ? `"${goodfit2El.value}"` : 'null');
-        console.log('goodfit3 element exists:', !!goodfit3El);
-        console.log('goodfit3 value:', goodfit3El ? `"${goodfit3El.value}"` : 'null');
-        
+        // Collect manual inputs
         const manualInputs = {
           subheading: document.getElementById('subheading').value.trim(),
           description: document.getElementById('description').value.trim(),
           achievement4: document.getElementById('achievement4').value.trim(),
-          goodfit1: goodfit1El ? goodfit1El.value.trim() : '',
-          goodfit2: goodfit2El ? goodfit2El.value.trim() : '',
-          goodfit3: goodfit3El ? goodfit3El.value.trim() : ''
+          goodfit1: document.getElementById('goodfit1').value.trim(),
+          goodfit2: document.getElementById('goodfit2').value.trim(),
+          goodfit3: document.getElementById('goodfit3').value.trim()
         };
-        
-        console.log('📋 Final manual inputs:', manualInputs);
 
         // Send to main thread for slide generation
         postToMain({
@@ -509,18 +489,6 @@
       isGenerating = false;
     }
 
-    function handleTextLayerDebug(data) {
-      const debugInfo = document.getElementById('debug-info');
-      if (debugInfo) {
-        debugInfo.innerHTML = `
-          <h4>Layer Update Results:</h4>
-          <p><strong>✅ Successfully updated:</strong> ${data.successfulUpdates || 'none'}</p>
-          <p><strong>❌ Failed to update:</strong> ${data.failedUpdates || 'none'}</p>
-          <p><strong>Goodfit data:</strong> g1="${data.goodfit1}" g2="${data.goodfit2}" g3="${data.goodfit3}"</p>
-        `;
-        debugInfo.style.display = 'block';
-      }
-    }
 
     // External API functions (run in iframe)
     async function fetchAuditorData(auditorUrl) {

@@ -1,0 +1,69 @@
+vendor-core-2f2c6ee683653ffc.min.js.br:77 Syntax error on line 2: Unexpected token }
+    });
+    ^
+(anonymous) @ vendor-core-2f2c6ee683653ffc.min.js.br:77
+(anonymous) @ vendor-7298e61c39ab6090.min.js.br:6
+X @ 3915-196c2d63e83961bc.min.js.br:633
+await in X
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:763
+await in (anonymous)
+em @ 3915-196c2d63e83961bc.min.js.br:763
+eu @ 3915-196c2d63e83961bc.min.js.br:763
+await in eu
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:763
+await in (anonymous)
+enqueue @ figma_app-1bfbbb73a874f00f.min.js.br:68
+et @ 3915-196c2d63e83961bc.min.js.br:217
+callback @ figma_app-1bfbbb73a874f00f.min.js.br:17
+d @ 4989-b3ce98acfb0b7c15.min.js.br:15
+(anonymous) @ 4989-b3ce98acfb0b7c15.min.js.br:15
+onAction @ 4989-b3ce98acfb0b7c15.min.js.br:15
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:1395
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:1392
+ez @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+e$ @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+(anonymous) @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+tn @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+ti @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+(anonymous) @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+oP @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+ej @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+tu @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+nz @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+nR @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+t @ vendor-core-2f2c6ee683653ffc.min.js.br:77
+vendor-core-2f2c6ee683653ffc.min.js.br:77 Error: Syntax error on line 2: Unexpected token }
+    at X (3915-196c2d63e83961bc.min.js.br:633:45)
+    at async 3915-196c2d63e83961bc.min.js.br:763:9783
+(anonymous) @ vendor-core-2f2c6ee683653ffc.min.js.br:77
+(anonymous) @ vendor-7298e61c39ab6090.min.js.br:6
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:763
+Promise.catch
+em @ 3915-196c2d63e83961bc.min.js.br:763
+eu @ 3915-196c2d63e83961bc.min.js.br:763
+await in eu
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:763
+await in (anonymous)
+enqueue @ figma_app-1bfbbb73a874f00f.min.js.br:68
+et @ 3915-196c2d63e83961bc.min.js.br:217
+callback @ figma_app-1bfbbb73a874f00f.min.js.br:17
+d @ 4989-b3ce98acfb0b7c15.min.js.br:15
+(anonymous) @ 4989-b3ce98acfb0b7c15.min.js.br:15
+onAction @ 4989-b3ce98acfb0b7c15.min.js.br:15
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:1395
+(anonymous) @ 3915-196c2d63e83961bc.min.js.br:1392
+ez @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+e$ @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+(anonymous) @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+tn @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+ti @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+(anonymous) @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+oP @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+ej @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+tu @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+nz @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+nR @ vendor-core-2f2c6ee683653ffc.min.js.br:15
+t @ vendor-core-2f2c6ee683653ffc.min.js.br:77
+vendor-core-2f2c6ee683653ffc.min.js.br:77 Error: Syntax error on line 2: Unexpected token }
+    at X (3915-196c2d63e83961bc.min.js.br:633:45)
+    at async 3915-196c2d63e83961bc.min.js.br:763:9783
