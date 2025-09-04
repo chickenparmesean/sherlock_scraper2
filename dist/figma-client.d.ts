@@ -30,9 +30,10 @@ export declare class FigmaClient {
      */
     getFigmaFile(fileKey: string): Promise<FigmaFile>;
     /**
-     * Duplicate a Figma file to create a new copy with standardized naming
+     * Note: File duplication is not supported by Figma REST API
+     * Only Plugin API supports creating/duplicating files
+     * Working directly with template file instead
      */
-    duplicateFigmaFile(templateFileKey: string, protocolName?: string, auditorName?: string): Promise<string>;
     /**
      * Find a layer/node in the Figma file by name (recursive search)
      */
@@ -62,11 +63,12 @@ export declare class FigmaClient {
      */
     updateMultipleTexts(fileKey: string, updates: Record<string, string>): Promise<boolean>;
     /**
-     * Generate a complete slide from template with auditor data and manual inputs
+     * Update slide content directly in template file
+     * Note: REST API cannot duplicate files, so we work with existing template
      */
-    generateSlide(templateFileKey: string, auditorData: any, manualInputs: Record<string, string>, protocolName: string): Promise<{
+    updateSlideContent(templateFileKey: string, auditorData: any, manualInputs: Record<string, string>, protocolName: string): Promise<{
         success: boolean;
-        fileKey?: string;
+        fileKey: string;
         error?: string;
     }>;
     /**

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sherlock Auditor Slide Generator</title>
+    <title>Sherlock Auditor Content Generator</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -46,6 +46,28 @@
 
         .content {
             padding: 2rem;
+        }
+
+        .workflow-info {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .workflow-info h3 {
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+        }
+
+        .workflow-info ol {
+            margin-left: 1.5rem;
+            color: #333;
+        }
+
+        .workflow-info li {
+            margin-bottom: 0.5rem;
         }
 
         .form-section {
@@ -91,7 +113,7 @@
             margin-left: 0.5rem;
         }
 
-        input[type="text"], textarea {
+        input[type="text"], input[type="url"], textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -101,7 +123,7 @@
             font-family: inherit;
         }
 
-        input[type="text"]:focus, textarea:focus {
+        input[type="text"]:focus, input[type="url"]:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -136,18 +158,6 @@
         .btn:disabled {
             background: #ccc;
             cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            margin-right: 1rem;
-            width: auto;
-            padding: 10px 20px;
-            font-size: 14px;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
         }
 
         .results {
@@ -185,70 +195,93 @@
             border-left: 4px solid #27ae60;
         }
 
-        .examples {
-            background: #e8f4f8;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-top: 1rem;
+        .content-blocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .examples h4 {
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
-        }
-
-        .examples code {
-            background: #34495e;
-            color: #ecf0f1;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .examples p {
-            margin: 0.5rem 0;
-            color: #555;
-        }
-
-        .auto-field {
-            background: #e8f5e8;
-            border-color: #4caf50;
-        }
-
-        .auto-field label::after {
-            content: " (Auto-filled)";
-            color: #4caf50;
-            font-size: 0.8rem;
-            font-weight: normal;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .slide-result {
+        .content-block {
             background: white;
-            border: 2px solid #4caf50;
+            border: 2px solid #e5e5e5;
             border-radius: 8px;
-            padding: 1.5rem;
+            overflow: hidden;
+        }
+
+        .content-block h4 {
+            background: #667eea;
+            color: white;
+            padding: 12px 16px;
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .content-block-body {
+            padding: 16px;
+        }
+
+        .copyable-text {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            cursor: text;
+            user-select: all;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .copy-btn.copied {
+            background: #6c757d;
+        }
+
+        .image-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 12px;
             margin-top: 1rem;
         }
 
-        .slide-result h4 {
-            color: #27ae60;
-            margin-bottom: 1rem;
+        .image-section h5 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 13px;
         }
 
-        .slide-result a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .slide-result a:hover {
-            text-decoration: underline;
+        .image-url {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            cursor: text;
+            user-select: all;
         }
 
         .field-help {
@@ -256,38 +289,87 @@
             color: #666;
             margin-top: 0.25rem;
         }
+
+        .generated-content {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .generated-content h3 {
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .slide-preview {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-preview h4 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .preview-field {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .preview-field:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .preview-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-content {
+            color: #333;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎨 Sherlock Auditor Slide Generator</h1>
-            <p>Generate professional slides combining Sherlock data with custom content</p>
+            <h1>🎨 Sherlock Auditor Content Generator</h1>
+            <p>Generate copyable content for your Figma slides</p>
         </div>
 
         <div class="content">
-            <!-- Template Configuration -->
-            <div class="form-section">
-                <h2>📋 Template Configuration</h2>
-                <div class="input-group">
-                    <label for="templateFileKey">Figma Template File Key</label>
-                    <input type="text" id="templateFileKey" value="h4PIIlg7ix2yf31rZkPEE6" placeholder="e.g., ABC123XYZ" />
-                    <div class="field-help">Extract from Figma URL: figma.com/file/ABC123XYZ/Template-Name</div>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="testConnection()">Test Connection</button>
-                    <button class="btn btn-secondary" onclick="analyzeStructure()">Analyze Structure</button>
-                </div>
+            <!-- Workflow Instructions -->
+            <div class="workflow-info">
+                <h3>🎯 Figma Browser Workflow</h3>
+                <ol>
+                    <li><strong>Generate Content:</strong> Fill out the form below and click "Generate Content"</li>
+                    <li><strong>Copy Text:</strong> Use the copy buttons to grab each text block</li>
+                    <li><strong>Paste in Figma:</strong> Open your slide template in Figma browser and paste the content</li>
+                    <li><strong>Replace Images:</strong> Use the provided image URLs to replace profile pictures in Figma</li>
+                </ol>
             </div>
 
-            <!-- Auditor & Protocol Information -->
+            <!-- Auditor & Protocol Section -->
             <div class="form-section">
                 <h2>👤 Auditor & Protocol</h2>
+                
                 <div class="form-grid">
                     <div class="input-group">
-                        <label for="auditorUsername">Auditor Username <span class="label-description">(from Sherlock)</span></label>
-                        <input type="text" id="auditorUsername" placeholder="e.g., berndartmueller" />
+                        <label for="auditorUrl">Auditor Profile URL <span class="label-description">(from Sherlock)</span></label>
+                        <input type="url" id="auditorUrl" placeholder="https://audits.sherlock.xyz/watson/berndartmueller" />
                         <div class="field-help">Auto-fills: name, rankings, earnings, vulnerabilities summary</div>
                     </div>
                     <div class="input-group">
@@ -340,8 +422,8 @@
             </div>
 
             <!-- Generate Button -->
-            <button class="btn" onclick="generateSlide()" id="generateBtn">
-                🎨 Generate Slide
+            <button class="btn" onclick="generateContent()" id="generateBtn">
+                🎨 Generate Content for Figma
             </button>
 
             <!-- Results Section -->
@@ -353,69 +435,14 @@
     </div>
 
     <script>
-        async function testConnection() {
-            const templateFileKey = document.getElementById('templateFileKey').value.trim();
-            if (!templateFileKey) {
-                alert('Please enter a template file key');
-                return;
-            }
+        let currentAuditorData = null;
 
-            showLoading('Testing Figma connection...');
-
-            try {
-                const response = await fetch('/api/figma/test-connection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileKey: templateFileKey })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showSuccess(`✅ Connection successful!<br>Template: "${data.file.name}"<br>Version: ${data.file.version}`);
-                } else {
-                    showError(`Connection failed: ${data.error}`);
-                }
-            } catch (error) {
-                showError(`Network error: ${error.message}`);
-            }
-        }
-
-        async function analyzeStructure() {
-            const templateFileKey = document.getElementById('templateFileKey').value.trim();
-            if (!templateFileKey) {
-                alert('Please enter a template file key');
-                return;
-            }
-
-            showLoading('Analyzing template structure...');
-
-            try {
-                const response = await fetch('/api/figma/analyze-structure', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileKey: templateFileKey })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    displayStructureAnalysis(data.analysis);
-                } else {
-                    showError(`Analysis failed: ${data.error}`);
-                }
-            } catch (error) {
-                showError(`Network error: ${error.message}`);
-            }
-        }
-
-        async function generateSlide() {
-            const templateFileKey = document.getElementById('templateFileKey').value.trim();
-            const auditorUsername = document.getElementById('auditorUsername').value.trim();
+        async function generateContent() {
+            const auditorUrl = document.getElementById('auditorUrl').value.trim();
             const protocolName = document.getElementById('protocolName').value.trim();
 
-            if (!templateFileKey || !auditorUsername || !protocolName) {
-                alert('Please fill in Template File Key, Auditor Username, and Protocol Name');
+            if (!auditorUrl || !protocolName) {
+                alert('Please fill in Auditor URL and Protocol Name');
                 return;
             }
 
@@ -428,32 +455,155 @@
                 goodfit3: document.getElementById('goodfit3').value.trim()
             };
 
-            showLoading(`Generating slide for ${auditorUsername} × ${protocolName}...`);
+            showLoading('Fetching auditor data from Sherlock...');
             document.getElementById('generateBtn').disabled = true;
 
             try {
-                const response = await fetch('/api/generate-slide', {
+                // Extract username from URL
+                const username = extractUsernameFromUrl(auditorUrl);
+                if (!username) {
+                    throw new Error('Invalid Sherlock URL. Please provide a valid auditor profile URL.');
+                }
+
+                const response = await fetch('/api/scrape-profile', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        templateFileKey,
-                        auditorUsername,
-                        protocolName,
-                        manualInputs
+                        username: username,
+                        url: auditorUrl
                     })
                 });
 
                 const data = await response.json();
 
-                if (data.success) {
-                    displaySlideResult(data);
-                } else {
-                    showError(`Slide generation failed: ${data.error}`);
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to fetch auditor data');
                 }
+
+                currentAuditorData = data.profile;
+                displayGeneratedContent(currentAuditorData, manualInputs, protocolName);
+
             } catch (error) {
-                showError(`Network error: ${error.message}`);
+                showError(`Failed to generate content: ${error.message}`);
             } finally {
                 document.getElementById('generateBtn').disabled = false;
+            }
+        }
+
+        function extractUsernameFromUrl(url) {
+            const match = url.match(/sherlock\.xyz\/watson\/([^\/\?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function displayGeneratedContent(auditorData, manualInputs, protocolName) {
+            // Build vulnerabilities summary
+            const vulnParts = [];
+            if (auditorData.achievements?.highsFound) vulnParts.push(`${auditorData.achievements.highsFound} highs found`);
+            if (auditorData.achievements?.soloHighs) vulnParts.push(`${auditorData.achievements.soloHighs} solo highs found`);
+            if (auditorData.achievements?.mediumsFound) vulnParts.push(`${auditorData.achievements.mediumsFound} mediums found`);
+            if (auditorData.achievements?.soloMediums) vulnParts.push(`${auditorData.achievements.soloMediums} solo mediums found`);
+            const vulnerabilitiesSummary = vulnParts.join(', ');
+
+            const contentData = {
+                'Slide Title': `Why ${auditorData.name} Is a Great Fit for ${protocolName}?`,
+                'Auditor Name': auditorData.name,
+                'Auditor Subheading': manualInputs.subheading || '[Add subheading]',
+                'Auditor Description': manualInputs.description || '[Add description]',
+                'Achievement 1 - Rankings': auditorData.achievements?.rankings || '[Rankings not found]',
+                'Achievement 2 - Earnings': auditorData.achievements?.earnings || '[Earnings not found]',
+                'Achievement 3 - Vulnerabilities': vulnerabilitiesSummary || '[Vulnerabilities not found]',
+                'Achievement 4 - Additional': manualInputs.achievement4 || '[Add additional achievement]',
+                'Good Fit Point 1': manualInputs.goodfit1 || '[Add first reason]',
+                'Good Fit Point 2': manualInputs.goodfit2 || '[Add second reason]',
+                'Good Fit Point 3': manualInputs.goodfit3 || '[Add third reason]'
+            };
+
+            let html = `
+                <div class="generated-content">
+                    <h3>🎉 Content Generated Successfully!</h3>
+                    
+                    <div class="slide-preview">
+                        <h4>📋 Slide Preview</h4>
+                        ${Object.entries(contentData).map(([label, content]) => `
+                            <div class="preview-field">
+                                <div class="preview-label">${label}:</div>
+                                <div class="preview-content">${content}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="content-blocks">
+                        ${Object.entries(contentData).map(([label, content]) => `
+                            <div class="content-block">
+                                <h4>${label}</h4>
+                                <div class="content-block-body">
+                                    <div class="copyable-text">${content}</div>
+                                    <button class="copy-btn" onclick="copyToClipboard(this, '${content.replace(/'/g, "\\'")}')">
+                                        📋 Copy Text
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                        
+                        ${auditorData.profileImageUrl ? `
+                            <div class="content-block">
+                                <h4>Profile Image</h4>
+                                <div class="content-block-body">
+                                    <div class="image-section">
+                                        <h5>📸 Profile Picture URL:</h5>
+                                        <div class="image-url">${auditorData.profileImageUrl}</div>
+                                        <button class="copy-btn" onclick="copyToClipboard(this, '${auditorData.profileImageUrl}')">
+                                            📋 Copy Image URL
+                                        </button>
+                                    </div>
+                                    <div class="field-help" style="margin-top: 10px;">
+                                        In Figma: Select image → Right panel → Fill → Image → Paste URL
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div style="background: #e8f4f8; padding: 1rem; border-radius: 6px; margin-top: 1.5rem;">
+                        <h5 style="color: #2c3e50; margin-bottom: 0.5rem;">🎯 Next Steps:</h5>
+                        <ol style="margin-left: 1.5rem; color: #333;">
+                            <li>Open your slide template in Figma browser</li>
+                            <li>Click the copy buttons above to copy each text block</li>
+                            <li>Paste content into the corresponding text layers in your Figma template</li>
+                            <li>Use the profile image URL to replace placeholder images</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultsContent').innerHTML = html;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        async function copyToClipboard(button, text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (error) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy Text';
+                }, 2000);
             }
         }
 
@@ -468,82 +618,6 @@
             const results = document.getElementById('results');
             const content = document.getElementById('resultsContent');
             content.innerHTML = `<div class="error">${message}</div>`;
-            results.style.display = 'block';
-        }
-
-        function showSuccess(message) {
-            const results = document.getElementById('results');
-            const content = document.getElementById('resultsContent');
-            content.innerHTML = `<div class="success">${message}</div>`;
-            results.style.display = 'block';
-        }
-
-        function displayStructureAnalysis(analysis) {
-            const results = document.getElementById('results');
-            const content = document.getElementById('resultsContent');
-            
-            let html = `
-                <div class="success">
-                    <h4>📋 Template Analysis: ${analysis.fileName}</h4>
-                    
-                    <h5>📝 Text Layers (${analysis.textLayers.length} found)</h5>
-                    <div style="max-height: 200px; overflow-y: auto; margin: 1rem 0;">
-                        ${analysis.textLayers.map(layer => `
-                            <div style="background: #f8f9fa; padding: 8px; margin: 4px 0; border-radius: 4px; font-size: 12px;">
-                                <strong>${layer.name}</strong> (ID: ${layer.id})<br>
-                                <em>Current: "${layer.characters}"</em>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <h5>🖼️ Image Containers (${analysis.imageLayers.length} found)</h5>
-                    <div style="max-height: 150px; overflow-y: auto;">
-                        ${analysis.imageLayers.slice(0, 10).map(layer => `
-                            <div style="background: #f8f9fa; padding: 8px; margin: 4px 0; border-radius: 4px; font-size: 12px;">
-                                <strong>${layer.name}</strong> (${layer.type}) - ID: ${layer.id}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            
-            content.innerHTML = html;
-            results.style.display = 'block';
-        }
-
-        function displaySlideResult(data) {
-            const results = document.getElementById('results');
-            const content = document.getElementById('resultsContent');
-            
-            let html = `
-                <div class="slide-result">
-                    <h4>🎉 Slide Generated Successfully!</h4>
-                    
-                    <div style="margin: 1rem 0;">
-                        <strong>📁 File Key:</strong> ${data.fileKey}<br>
-                        <strong>👤 Auditor:</strong> ${data.auditorData.name}<br>
-                        <strong>💰 Earnings:</strong> ${data.auditorData.achievements?.earnings || 'N/A'}<br>
-                        <strong>🏆 Rankings:</strong> ${data.auditorData.achievements?.rankings || 'N/A'}<br>
-                        <strong>🔍 Vulnerabilities:</strong> ${data.auditorData.achievements?.vulnerabilitiesSummary || 'N/A'}
-                    </div>
-                    
-                    <div style="margin: 1rem 0;">
-                        <a href="${data.figmaUrl}" target="_blank" style="font-size: 18px;">
-                            🎨 Open Slide in Figma →
-                        </a>
-                    </div>
-                    
-                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                        <strong>📝 What was updated:</strong><br>
-                        • Auditor name, rankings, earnings, vulnerabilities (auto-filled)<br>
-                        • Profile image replaced (if available)<br>
-                        • Protocol name in title<br>
-                        • All custom content from form
-                    </div>
-                </div>
-            `;
-            
-            content.innerHTML = html;
             results.style.display = 'block';
         }
     </script>

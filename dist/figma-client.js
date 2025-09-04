@@ -45,27 +45,10 @@ class FigmaClient {
         return response.data;
     }
     /**
-     * Duplicate a Figma file to create a new copy with standardized naming
+     * Note: File duplication is not supported by Figma REST API
+     * Only Plugin API supports creating/duplicating files
+     * Working directly with template file instead
      */
-    async duplicateFigmaFile(templateFileKey, protocolName, auditorName) {
-        const now = new Date();
-        const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19); // 2025-09-04T14-30-45
-        let fileName;
-        if (protocolName && auditorName) {
-            fileName = `${timestamp} ${protocolName} ${auditorName}`;
-        }
-        else {
-            fileName = `${timestamp} Slide Copy`;
-        }
-        const requestBody = {
-            name: fileName
-        };
-        const response = await this.makeRequest(`/files/${templateFileKey}/copy`, 'POST', requestBody);
-        if (response.data.err) {
-            throw new Error(`Failed to duplicate file: ${response.data.err}`);
-        }
-        return response.data.key;
-    }
     /**
      * Find a layer/node in the Figma file by name (recursive search)
      */
@@ -194,12 +177,11 @@ class FigmaClient {
         }
     }
     /**
-     * Generate a complete slide from template with auditor data and manual inputs
+     * Update slide content directly in template file
+     * Note: REST API cannot duplicate files, so we work with existing template
      */
-    async generateSlide(templateFileKey, auditorData, manualInputs, protocolName) {
+    async updateSlideContent(templateFileKey, auditorData, manualInputs, protocolName) {
         try {
-            // Create new slide with proper naming
-            const newFileKey = await this.duplicateFigmaFile(templateFileKey, protocolName, auditorData.name);
             // Prepare text updates based on CSV mapping
             const textUpdates = {};
             // Auto-populated from scraper
@@ -209,8 +191,18 @@ class FigmaClient {
                 textUpdates['1:14'] = auditorData.achievements.rankings;
             if (auditorData.achievements?.earnings)
                 textUpdates['1:62'] = auditorData.achievements.earnings;
-            if (auditorData.achievements?.vulnerabilitiesSummary)
-                textUpdates['1:64'] = auditorData.achievements.vulnerabilitiesSummary;
+            // Build vulnerabilities summary
+            const vulnParts = [];
+            if (auditorData.achievements?.highsFound)
+                vulnParts.push(`${auditorData.achievements.highsFound} highs found`);
+            if (auditorData.achievements?.soloHighs)
+                vulnParts.push(`${auditorData.achievements.soloHighs} solo highs found`);
+            if (auditorData.achievements?.mediumsFound)
+                vulnParts.push(`${auditorData.achievements.mediumsFound} mediums found`);
+            if (auditorData.achievements?.soloMediums)
+                vulnParts.push(`${auditorData.achievements.soloMediums} solo mediums found`);
+            if (vulnParts.length > 0)
+                textUpdates['1:64'] = vulnParts.join(', ');
             // Manual inputs from UI
             if (manualInputs.subheading)
                 textUpdates['1:10'] = manualInputs.subheading;
@@ -229,20 +221,28 @@ class FigmaClient {
                 const titleText = `Why ${auditorData.name || 'Auditor'} Is a Great Fit for ${protocolName}?`;
                 textUpdates['1:18'] = titleText;
             }
-            // Update all text fields
-            const textUpdateSuccess = await this.updateMultipleTexts(newFileKey, textUpdates);
+            console.log('🎯 Updating text layers:', Object.keys(textUpdates).length, 'updates');
+            console.log('📝 Text updates:', textUpdates);
+            // Update all text fields in the template
+            const textUpdateSuccess = await this.updateMultipleTexts(templateFileKey, textUpdates);
+            if (!textUpdateSuccess) {
+                throw new Error('Failed to update text layers');
+            }
             // Replace profile image if available
             if (auditorData.profileImageUrl) {
-                await this.replaceImage(newFileKey, '1:6', auditorData.profileImageUrl);
+                console.log('🖼️ Replacing profile image:', auditorData.profileImageUrl);
+                await this.replaceImage(templateFileKey, '1:6', auditorData.profileImageUrl);
             }
             return {
                 success: true,
-                fileKey: newFileKey
+                fileKey: templateFileKey // Return the template file key since we're working with it directly
             };
         }
         catch (error) {
+            console.error('❌ Slide update failed:', error);
             return {
                 success: false,
+                fileKey: templateFileKey,
                 error: error instanceof Error ? error.message : 'Unknown error'
             };
         }
