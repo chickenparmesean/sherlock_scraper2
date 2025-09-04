@@ -674,7 +674,7 @@
       // Check if it's an external URL that needs proxying
       if (originalUrl && (originalUrl.includes('sherlock-files.ams3.digitaloceanspaces.com') || 
           originalUrl.startsWith('https://') && !originalUrl.includes(window.location.hostname))) {
-        const apiHost = 'https://YOUR-PROJECT-NAME.replit.app';
+        const apiHost = 'https://figma-auditor-gen-tyler292.replit.app';
         return `${apiHost}/api/proxy-image?url=${encodeURIComponent(originalUrl)}`;
       }
       return originalUrl;
@@ -702,7 +702,7 @@
 
     async function getApiHost() {
       const endpoints = [
-        'https://YOUR-PROJECT-NAME.replit.app',
+        'https://figma-auditor-gen-tyler292.replit.app',
         'http://localhost:5000'
       ];
       
@@ -822,7 +822,7 @@
         console.log('🔍 Starting logo load...');
         
         // Hardcode the working endpoint for now
-        const apiHost = 'https://YOUR-PROJECT-NAME.replit.app';
+        const apiHost = 'https://figma-auditor-gen-tyler292.replit.app';
         console.log('🔗 Using API host:', apiHost);
         
         const response = await fetch(`${apiHost}/api/logos`, {
