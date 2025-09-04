@@ -65,46 +65,6 @@ app.post('/api/scrape-profile', async (req, res) => {
   }
 });
 
-// API endpoint to scrape multiple profiles
-app.post('/api/scrape-multiple', async (req, res) => {
-  try {
-    const { usernames } = req.body;
-    
-    if (!usernames || !Array.isArray(usernames)) {
-      return res.status(400).json({ error: 'Usernames array is required' });
-    }
-
-    console.log(`🔍 API request to scrape multiple: ${usernames.join(', ')}`);
-    
-    const urls = usernames.map(username => `https://audits.sherlock.xyz/watson/${username}`);
-    const results = await scraper.scrapeMultiple(urls, {
-      enableLogging: true,
-      convertToBase64: false
-    }, 2);
-
-    // Convert image results to profile format
-    const profiles = await Promise.all(urls.map(async (url, index) => {
-      const username = usernames[index];
-      const profile = await scraper.scrapeProfile(url, {
-        enableLogging: false,
-        convertToBase64: false
-      });
-      return profile;
-    }));
-
-    res.json({
-      success: true,
-      profiles
-    });
-
-  } catch (error) {
-    console.error('API Error:', error.message);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
 
 // Figma API endpoints
 app.post('/api/figma/test-connection', async (req, res) => {
@@ -233,6 +193,78 @@ app.post('/api/figma/create-slide', async (req, res) => {
 
   } catch (error) {
     console.error('Slide creation failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Complete slide generation endpoint
+app.post('/api/generate-slide', async (req, res) => {
+  try {
+    if (!figmaClient) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Figma client not initialized' 
+      });
+    }
+
+    const { 
+      templateFileKey, 
+      auditorUsername, 
+      protocolName,
+      manualInputs 
+    } = req.body;
+    
+    if (!templateFileKey || !auditorUsername || !protocolName) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Template file key, auditor username, and protocol name are required' 
+      });
+    }
+
+    console.log(`🎨 Generating slide for ${auditorUsername} x ${protocolName}`);
+    
+    // Step 1: Scrape auditor data
+    const profileUrl = `https://audits.sherlock.xyz/watson/${auditorUsername}`;
+    const auditorData = await scraper.scrapeProfile(profileUrl, {
+      enableLogging: true,
+      convertToBase64: false
+    });
+    
+    if (!auditorData.name) {
+      return res.status(400).json({
+        success: false,
+        error: 'Failed to scrape auditor data or auditor not found'
+      });
+    }
+    
+    // Step 2: Generate slide with combined data
+    const slideResult = await figmaClient.generateSlide(
+      templateFileKey,
+      auditorData,
+      manualInputs || {},
+      protocolName
+    );
+    
+    if (!slideResult.success) {
+      return res.status(500).json({
+        success: false,
+        error: slideResult.error
+      });
+    }
+    
+    res.json({
+      success: true,
+      fileKey: slideResult.fileKey,
+      auditorData,
+      figmaUrl: `https://www.figma.com/file/${slideResult.fileKey}`,
+      message: `Slide generated successfully for ${auditorUsername} x ${protocolName}`
+    });
+
+  } catch (error) {
+    console.error('Slide generation failed:', error.message);
     res.status(500).json({
       success: false,
       error: error.message

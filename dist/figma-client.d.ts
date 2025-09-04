@@ -30,9 +30,9 @@ export declare class FigmaClient {
      */
     getFigmaFile(fileKey: string): Promise<FigmaFile>;
     /**
-     * Duplicate a Figma file to create a new copy
+     * Duplicate a Figma file to create a new copy with standardized naming
      */
-    duplicateFigmaFile(templateFileKey: string, newFileName?: string): Promise<string>;
+    duplicateFigmaFile(templateFileKey: string, protocolName?: string, auditorName?: string): Promise<string>;
     /**
      * Find a layer/node in the Figma file by name (recursive search)
      */
@@ -61,6 +61,14 @@ export declare class FigmaClient {
      * Batch update multiple text nodes
      */
     updateMultipleTexts(fileKey: string, updates: Record<string, string>): Promise<boolean>;
+    /**
+     * Generate a complete slide from template with auditor data and manual inputs
+     */
+    generateSlide(templateFileKey: string, auditorData: any, manualInputs: Record<string, string>, protocolName: string): Promise<{
+        success: boolean;
+        fileKey?: string;
+        error?: string;
+    }>;
     /**
      * Helper method to traverse and log file structure for debugging
      */

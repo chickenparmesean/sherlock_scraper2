@@ -76,11 +76,18 @@ export class FigmaClient {
   }
 
   /**
-   * Duplicate a Figma file to create a new copy
+   * Duplicate a Figma file to create a new copy with standardized naming
    */
-  async duplicateFigmaFile(templateFileKey: string, newFileName?: string): Promise<string> {
-    const timestamp = new Date().toISOString().split('T')[0];
-    const fileName = newFileName || `Slide Copy - ${timestamp}`;
+  async duplicateFigmaFile(templateFileKey: string, protocolName?: string, auditorName?: string): Promise<string> {
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19); // 2025-09-04T14-30-45
+    
+    let fileName: string;
+    if (protocolName && auditorName) {
+      fileName = `${timestamp} ${protocolName} ${auditorName}`;
+    } else {
+      fileName = `${timestamp} Slide Copy`;
+    }
     
     const requestBody = {
       name: fileName
@@ -238,6 +245,67 @@ export class FigmaClient {
     } catch (error) {
       console.error('Failed to update multiple texts:', error);
       return false;
+    }
+  }
+
+  /**
+   * Generate a complete slide from template with auditor data and manual inputs
+   */
+  async generateSlide(
+    templateFileKey: string,
+    auditorData: any,
+    manualInputs: Record<string, string>,
+    protocolName: string
+  ): Promise<{ success: boolean; fileKey?: string; error?: string }> {
+    try {
+      // Create new slide with proper naming
+      const newFileKey = await this.duplicateFigmaFile(
+        templateFileKey,
+        protocolName,
+        auditorData.name
+      );
+
+      // Prepare text updates based on CSV mapping
+      const textUpdates: Record<string, string> = {};
+      
+      // Auto-populated from scraper
+      if (auditorData.name) textUpdates['1:9'] = auditorData.name;
+      if (auditorData.achievements?.rankings) textUpdates['1:14'] = auditorData.achievements.rankings;
+      if (auditorData.achievements?.earnings) textUpdates['1:62'] = auditorData.achievements.earnings;
+      if (auditorData.achievements?.vulnerabilitiesSummary) textUpdates['1:64'] = auditorData.achievements.vulnerabilitiesSummary;
+      
+      // Manual inputs from UI
+      if (manualInputs.subheading) textUpdates['1:10'] = manualInputs.subheading;
+      if (manualInputs.description) textUpdates['1:11'] = manualInputs.description;
+      if (manualInputs.achievement4) textUpdates['1:66'] = manualInputs.achievement4;
+      if (manualInputs.goodfit1) textUpdates['1:15'] = manualInputs.goodfit1;
+      if (manualInputs.goodfit2) textUpdates['1:68'] = manualInputs.goodfit2;
+      if (manualInputs.goodfit3) textUpdates['1:70'] = manualInputs.goodfit3;
+      
+      // Protocol name replacement in title
+      if (protocolName) {
+        const titleText = `Why ${auditorData.name || 'Auditor'} Is a Great Fit for ${protocolName}?`;
+        textUpdates['1:18'] = titleText;
+      }
+      
+      // Update all text fields
+      const textUpdateSuccess = await this.updateMultipleTexts(newFileKey, textUpdates);
+      
+      // Replace profile image if available
+      if (auditorData.profileImageUrl) {
+        await this.replaceImage(newFileKey, '1:6', auditorData.profileImageUrl);
+      }
+      
+      return {
+        success: true,
+        fileKey: newFileKey
+      };
+      
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 
