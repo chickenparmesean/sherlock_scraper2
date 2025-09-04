@@ -412,9 +412,17 @@
         // Fetch auditor data and profile image
         const auditorData = await fetchAuditorData(auditorUrl);
         
-        // Skip profile image for now to get slide generation working
-        console.log('🚫 Skipping profile image fetch for debugging');
-        // TODO: Re-enable image fetching once slide generation works
+        // Fetch profile image using CORS proxy
+        let profileImageBytes = null;
+        if (auditorData.profileImage) {
+          console.log('🖼️ Fetching profile image:', auditorData.profileImage);
+          try {
+            profileImageBytes = await fetchImageAsBytes(auditorData.profileImage);
+            console.log('✅ Profile image fetched successfully');
+          } catch (error) {
+            console.error('❌ Failed to fetch profile image:', error.message);
+          }
+        }
 
         // Collect manual inputs with debugging
         const goodfit1El = document.getElementById('goodfit1');
@@ -444,7 +452,10 @@
         postToMain({
           type: 'generate-slide',
           data: {
-            auditorData,
+            auditorData: {
+              ...auditorData,
+              profileImageBytes: profileImageBytes
+            },
             manualInputs,
             protocolName
           }
