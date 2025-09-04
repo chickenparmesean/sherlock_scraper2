@@ -41,8 +41,8 @@ async function generateSlideFromData(data) {
     }
     
     // Step 4: Place logos (if provided)
-    if (data.logoData && data.logoData.length > 0) {
-      await placeLogosInSlide(newSlide, data.logoData);
+    if (data.selectedLogos && data.selectedLogos.length > 0) {
+      await placeLogosInSlide(newSlide, data.selectedLogos);
       figma.ui.postMessage({ 
         type: 'slide-progress', 
         data: { step: 'logos-placed' }
@@ -204,16 +204,24 @@ async function replaceProfileImage(slide, imageBytes) {
 }
 
 // Place logos in slide
-async function placeLogosInSlide(slide, logoData) {
+async function placeLogosInSlide(slide, selectedLogos) {
   try {
-    const logoContainers = findLogoContainers(slide, logoData.length);
+    const logoContainers = findLogoContainers(slide, selectedLogos.length);
     
-    for (let i = 0; i < Math.min(logoData.length, logoContainers.length); i++) {
+    for (let i = 0; i < Math.min(selectedLogos.length, logoContainers.length); i++) {
       const container = logoContainers[i];
-      const logo = logoData[i];
+      const logo = selectedLogos[i];
       
-      if (logo.imageBytes) {
-        const imageHash = figma.createImage(logo.imageBytes).hash;
+      try {
+        // Fetch logo image from GitHub URL
+        console.log(`🔍 Fetching logo: ${logo.name} from ${logo.url}`);
+        const response = await fetch(logo.url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch logo: ${response.status}`);
+        }
+        
+        const imageBytes = new Uint8Array(await response.arrayBuffer());
+        const imageHash = figma.createImage(imageBytes).hash;
         
         if (container.type === 'RECTANGLE' || container.type === 'ELLIPSE') {
           container.fills = [{
@@ -221,11 +229,14 @@ async function placeLogosInSlide(slide, logoData) {
             scaleMode: 'FIT',
             imageHash: imageHash
           }];
+          console.log(`✅ Placed logo "${logo.name}" in container "${container.name}"`);
         }
+      } catch (logoError) {
+        console.error(`❌ Failed to place logo "${logo.name}":`, logoError);
       }
     }
     
-    console.log(`✅ Placed ${Math.min(logoData.length, logoContainers.length)} logos`);
+    console.log(`✅ Processed ${Math.min(selectedLogos.length, logoContainers.length)} logos`);
   } catch (error) {
     console.error('❌ Failed to place logos:', error);
   }
