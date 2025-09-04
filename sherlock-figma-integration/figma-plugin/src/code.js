@@ -162,7 +162,7 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
 async function updateTextInNode(node, targetName, newText) {
   if (node.type === 'TEXT') {
     console.log(`  📝 Found text node: "${node.name}" (looking for: "${targetName}")`);
-    if (node.name.toLowerCase().includes(targetName.toLowerCase())) {
+    if (node.name.toLowerCase() === targetName.toLowerCase()) {
       try {
         console.log(`  🎯 Match found! Updating "${node.name}" with: "${newText}"`);
         await figma.loadFontAsync(node.fontName);
