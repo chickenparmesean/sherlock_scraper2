@@ -134,22 +134,14 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   
   // Update each text layer
   let updatedCount = 0;
-  
   for (const mapping of textMappings) {
     if (mapping.content) {
-      console.log(`🎯 Trying to update "${mapping.targetName}" with: "${mapping.content}"`);
       const updated = await updateTextInNode(slide, mapping.targetName, mapping.content);
       if (updated) {
         updatedCount++;
-        console.log(`✅ Successfully updated "${mapping.targetName}"`);
-      } else {
-        console.log(`❌ Could not find text layer for "${mapping.targetName}"`);
       }
-    } else {
-      console.log(`⏭️  Skipping "${mapping.targetName}" - no content provided`);
     }
   }
-  
 }
 
 // Recursively find and update text nodes
@@ -277,7 +269,10 @@ function findLogoContainers(slide, maxCount) {
   const containers = [];
   
   function searchForLogos(node) {
-    if (node.name.toLowerCase().includes('logo')) {
+    if (containers.length >= maxCount) return;
+    
+    if (node.name && node.name.toLowerCase().includes('logo') && 
+        (node.type === 'RECTANGLE' || node.type === 'ELLIPSE')) {
       containers.push(node);
     }
     
@@ -289,61 +284,5 @@ function findLogoContainers(slide, maxCount) {
   }
   
   searchForLogos(slide);
-  
-  // Sort by position
-  containers.sort((a, b) => {
-    if (Math.abs(a.y - b.y) < 10) {
-      return a.x - b.x;
-    }
-    return a.y - b.y;
-  });
-  
   return containers.slice(0, maxCount);
-}
-
-// Analyze template structure
-function analyzeTemplateStructure(frame) {
-  const textNodes = [];
-  const imageNodes = [];
-  const logoNodes = [];
-  
-  function traverseNode(node) {
-    if (node.type === 'TEXT') {
-      textNodes.push({
-        name: node.name,
-        content: node.characters
-      });
-    } else if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE') {
-      if (node.name.toLowerCase().includes('logo')) {
-        logoNodes.push({
-          name: node.name,
-          type: node.type
-        });
-      } else {
-        const fills = node.fills;
-        if (fills && fills.some(fill => fill.type === 'IMAGE')) {
-          imageNodes.push({
-            name: node.name,
-            type: node.type
-          });
-        }
-      }
-    }
-    
-    if ('children' in node) {
-      for (const child of node.children) {
-        traverseNode(child);
-      }
-    }
-  }
-  
-  traverseNode(frame);
-  
-  return {
-    frameName: frame.name,
-    textNodes,
-    imageNodes,
-    logoNodes,
-    totalNodes: textNodes.length + imageNodes.length + logoNodes.length
-  };
 }
