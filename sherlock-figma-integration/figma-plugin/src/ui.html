@@ -571,7 +571,9 @@
             // Fetch signature image through proxy
             console.log(`🖼️ Fetching signature: ${selectedSignature.name}`);
             const apiHost = await getApiHost();
-            const signatureResponse = await fetch(`${apiHost}/api/proxy-image?url=${encodeURIComponent(selectedSignature.url)}`);
+            const signatureResponse = await fetch(`${apiHost}/api/proxy-image?url=${encodeURIComponent(selectedSignature.url)}`, {
+              headers: { 'Authorization': 'Bearer_MySecretKey789' }
+            });
             if (signatureResponse.ok) {
               const signatureBytes = new Uint8Array(await signatureResponse.arrayBuffer());
               selectedSignature.bytes = signatureBytes;
@@ -655,7 +657,8 @@
       const apiHost = await getApiHost();
       const encodedUrl = encodeURIComponent(auditorUrl);
       const response = await fetch(`${apiHost}/api/scrape-profile?url=${encodedUrl}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer_MySecretKey789' }
       });
 
       if (!response.ok) {
@@ -713,6 +716,7 @@
           console.log(`🔗 Testing: ${endpoint}/api/logos`);
           const response = await fetch(`${endpoint}/api/logos`, { 
             method: 'GET',
+            headers: { 'Authorization': 'Bearer_MySecretKey789' },
             signal: AbortSignal.timeout(5000)
           });
           console.log(`📡 Response from ${endpoint}:`, response.status, response.ok);
@@ -828,7 +832,8 @@
         const response = await fetch(`${apiHost}/api/logos`, {
           method: 'GET',
           headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': 'Bearer_MySecretKey789'
           }
         });
         
@@ -960,7 +965,8 @@
         const response = await fetch(`${apiHost}/api/logos/upload`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer_MySecretKey789'
           },
           body: JSON.stringify({
             fileName: fileName,
@@ -1012,7 +1018,9 @@
     async function loadSignatures() {
       try {
         const apiHost = await getApiHost();
-        const response = await fetch(`${apiHost}/api/signatures`);
+        const response = await fetch(`${apiHost}/api/signatures`, {
+          headers: { 'Authorization': 'Bearer_MySecretKey789' }
+        });
         
         if (!response.ok) {
           throw new Error(`Failed to load signatures: ${response.status}`);

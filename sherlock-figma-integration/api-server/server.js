@@ -30,6 +30,30 @@ app.use((req, res, next) => {
   }
 });
 
+// API Key authentication for protected endpoints
+app.use('/api', (req, res, next) => {
+  // Allow public access to static files and root path
+  if (req.path === '/' || req.path.startsWith('/public/')) {
+    return next();
+  }
+  
+  const authHeader = req.headers.authorization;
+  const expectedKey = process.env.PLUGIN_API_KEY;
+  
+  if (!expectedKey) {
+    console.log('⚠️ No PLUGIN_API_KEY found in environment');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+  
+  if (!authHeader || authHeader !== expectedKey) {
+    console.log('🚫 Invalid or missing API key:', authHeader);
+    return res.status(401).json({ error: 'Invalid API key' });
+  }
+  
+  console.log('✅ Valid API key provided');
+  next();
+});
+
 // Initialize your actual working scraper
 const scraper = new WorkingSherlockScraper();
 
