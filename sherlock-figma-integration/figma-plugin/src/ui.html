@@ -290,14 +290,24 @@
     <h2>🏢 Protocol Logos</h2>
     
     <div class="input-group">
-      <label for="logoSearch">Search & Select Logos</label>
-      <input type="text" id="logoSearch" placeholder="Type to search logos..." onkeyup="filterLogos()" />
+      <label for="logo1Select">Logo 1</label>
+      <select id="logo1Select" onchange="updateSelectedLogos()">
+        <option value="">Select a logo...</option>
+      </select>
     </div>
     
     <div class="input-group">
-      <div id="logoGrid" class="logo-grid">
-        <div class="loading-logos">Loading logos from repository...</div>
-      </div>
+      <label for="logo2Select">Logo 2</label>
+      <select id="logo2Select" onchange="updateSelectedLogos()">
+        <option value="">Select a logo...</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label for="logo3Select">Logo 3</label>
+      <select id="logo3Select" onchange="updateSelectedLogos()">
+        <option value="">Select a logo...</option>
+      </select>
     </div>
     
     <div class="button-row">
@@ -306,8 +316,7 @@
       <input type="file" id="logoFileInput" accept=".svg,.png" style="display: none;" onchange="uploadLogo()" />
     </div>
     
-    <div id="selectedLogos" class="selected-logos"></div>
-    <div class="field-help">Select up to 3 logos for the slide. Click to select/deselect.</div>
+    <div id="logoStatus" class="field-help">Loading logos from repository...</div>
   </div>
 
   <!-- Manual Content -->
