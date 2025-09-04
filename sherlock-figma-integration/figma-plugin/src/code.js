@@ -126,8 +126,8 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   // Text mapping based on layer names
   const textMappings = [
     { targetName: 'auditor-name', content: auditorData.name },
-    { targetName: 'subheading', content: manualInputs.subheading || '' },
-    { targetName: 'description', content: manualInputs.description || '' },
+    { targetName: 'auditor-subheading', content: manualInputs.subheading || '' },
+    { targetName: 'auditor-description', content: manualInputs.description || '' },
     { targetName: 'achievement-1', content: auditorData.achievements && auditorData.achievements.rankings || '' },
     { targetName: 'achievement-2', content: auditorData.achievements && auditorData.achievements.earnings || '' },
     { targetName: 'achievement-3', content: vulnerabilitiesSummary },
