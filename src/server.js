@@ -10,12 +10,24 @@ const PORT = 5000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Cache control headers to prevent caching issues in Replit
+// CORS headers for Figma plugin access
 app.use((req, res, next) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
   next();
+});
+
+// Handle preflight requests
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
 
 const scraper = new SherlockScraper();
@@ -33,7 +45,38 @@ try {
   console.log('❌ Figma client initialization failed:', error.message);
 }
 
-// API endpoint to scrape single profile
+// API endpoint to scrape single profile (GET for plugin compatibility)
+app.get('/api/scrape-profile', async (req, res) => {
+  try {
+    const { url } = req.query;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL parameter is required' });
+    }
+
+    console.log(`🔍 API request to scrape: ${url}`);
+    
+    const profile = await scraper.scrapeProfile(url, {
+      enableLogging: true,
+      includeMetadata: false,
+      convertToBase64: false
+    });
+
+    res.json({
+      success: true,
+      profile
+    });
+
+  } catch (error) {
+    console.error('API Error:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// API endpoint to scrape single profile (POST for backward compatibility)
 app.post('/api/scrape-profile', async (req, res) => {
   try {
     const { username } = req.body;
