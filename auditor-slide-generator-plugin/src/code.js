@@ -278,6 +278,18 @@ async function updateSlideTextLayers(slide, auditorData, manualInputs, protocolN
   }
   
   console.log(`📝 Updated ${updatedCount} out of ${textMappings.filter(m => m.content).length} text layers`);
+  
+  // Send debug info to UI
+  figma.ui.postMessage({
+    type: 'text-layer-debug',
+    data: {
+      goodfit1: manualInputs.goodfit1,
+      goodfit2: manualInputs.goodfit2, 
+      goodfit3: manualInputs.goodfit3,
+      layersFound: textMappings.map(m => m.targetName).join(', '),
+      updatesCount: updatedCount
+    }
+  });
 }
 
 // Recursively find and update text nodes

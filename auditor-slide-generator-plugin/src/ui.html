@@ -311,6 +311,10 @@
     <div id="status" class="hidden"></div>
   </div>
 
+  <!-- Debug info section -->
+  <div id="debug-info" style="display: none; margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 6px; font-size: 11px; color: #666;">
+  </div>
+
   <script>
     // iframe UI State
     let currentAuditorData = null;
@@ -340,6 +344,10 @@
           
         case 'slide-generated':
           handleSlideGenerated(data);
+          break;
+
+        case 'text-layer-debug':
+          handleTextLayerDebug(data);
           break;
           
         case 'error':
@@ -490,6 +498,24 @@
       
       updateGenerateButton(false);
       isGenerating = false;
+    }
+
+    function handleTextLayerDebug(data) {
+      const debugInfo = document.getElementById('debug-info');
+      if (debugInfo) {
+        debugInfo.innerHTML = `
+          <h4>Debug Info:</h4>
+          <p><strong>Goodfit fields captured:</strong></p>
+          <ul>
+            <li>goodfit1: "${data.goodfit1 || 'empty'}"</li>
+            <li>goodfit2: "${data.goodfit2 || 'empty'}"</li>
+            <li>goodfit3: "${data.goodfit3 || 'empty'}"</li>
+          </ul>
+          <p><strong>Layers found:</strong> ${data.layersFound}</p>
+          <p><strong>Updates made:</strong> ${data.updatesCount}</p>
+        `;
+        debugInfo.style.display = 'block';
+      }
     }
 
     // External API functions (run in iframe)
