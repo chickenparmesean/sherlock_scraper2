@@ -227,13 +227,27 @@ async function placeLogosInSlide(slide, selectedLogos) {
         const imageBytes = new Uint8Array(await response.arrayBuffer());
         const imageHash = figma.createImage(imageBytes).hash;
         
+        // Handle different container types
         if (container.type === 'RECTANGLE' || container.type === 'ELLIPSE') {
           container.fills = [{
             type: 'IMAGE',
             scaleMode: 'FIT',
             imageHash: imageHash
           }];
-          console.log(`✅ Placed logo "${logo.name}" in container "${container.name}"`);
+          console.log(`✅ Placed logo "${logo.name}" in ${container.type} "${container.name}"`);
+        } else if (container.type === 'FRAME' || container.type === 'GROUP') {
+          // For frames/groups, try to find a child rectangle/ellipse to place the image
+          const childShape = findFirstImageContainer(container);
+          if (childShape) {
+            childShape.fills = [{
+              type: 'IMAGE',
+              scaleMode: 'FIT', 
+              imageHash: imageHash
+            }];
+            console.log(`✅ Placed logo "${logo.name}" in child shape of "${container.name}"`);
+          } else {
+            console.log(`⚠️ Could not find suitable child shape in "${container.name}"`);
+          }
         }
       } catch (logoError) {
         console.error(`❌ Failed to place logo "${logo.name}":`, logoError);
@@ -286,9 +300,13 @@ function findLogoContainers(slide, maxCount) {
   function searchForLogos(node) {
     if (containers.length >= maxCount) return;
     
-    if (node.name && node.name.toLowerCase().includes('logo') && 
-        (node.type === 'RECTANGLE' || node.type === 'ELLIPSE')) {
-      containers.push(node);
+    if (node.name && node.name.toLowerCase().includes('logo')) {
+      // Support RECTANGLE, ELLIPSE, and any container that can hold images
+      if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || 
+          node.type === 'FRAME' || node.type === 'GROUP') {
+        containers.push(node);
+        console.log(`🎯 Found logo container: "${node.name}" (${node.type})`);
+      }
     }
     
     if ('children' in node) {
