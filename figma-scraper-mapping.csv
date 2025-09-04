@@ -1,0 +1,26 @@
+Layer Type,Figma Layer Name,Figma Layer ID,Scraper JSON Path,Data Type,Update Category,Notes
+Text,auditor-name,1:9,profile.name,string,Auto - Scraper,Direct mapping from scraper
+Text,auditor-subheading,1:10,N/A,string,Manual - UI Input,User needs to input custom subheading text
+Text,auditor-description,1:11,N/A,string,Manual - UI Input,User needs to write custom bio/description
+Text,achievement-1,1:14,profile.achievements.rankings,string,Auto - Scraper,Contest rankings from scraper
+Text,achievement-2,1:62,profile.achievements.earnings,string,Auto - Scraper,Earnings data from scraper
+Text,achievement-3,1:64,N/A,string,Manual - UI Input,User needs to input custom achievement text
+Text,achievement-4,1:66,N/A,string,Manual - UI Input,User needs to input custom achievement text
+Text,goodfit-1,1:15,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
+Text,goodfit-2,1:68,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
+Text,goodfit-3,1:70,N/A,string,Manual - UI Input,User needs to write why auditor fits protocol
+Text,"Why Deadroses Is a Great Fit for [PROTOCOL]?",1:18,N/A,string,Manual - UI Input,User needs to replace [PROTOCOL] with actual protocol name
+Text,"Audited:",1:12,N/A,string,Static,Label text - likely no changes needed
+Text,"Achievements",1:13,N/A,string,Static,Label text - likely no changes needed
+Image,profilepicture,1:6,profile.profileImage,image_url,Auto - Scraper,Profile image from scraper
+Image,signature,1:7,N/A,image_file,Future Development,Need signature upload/generation system
+Image,logo1,2:9,N/A,image_file,Future Development,Protocol logo database needed
+Image,logo2,2:6,N/A,image_file,Future Development,Protocol logo database needed  
+Image,logo3,2:3,N/A,image_file,Future Development,Protocol logo database needed
+Image,sherlocklogo,2:14,N/A,image_file,Static,Sherlock branding - likely no changes needed
+
+Additional Scraper Data Available,,,,,
+N/A,profile.achievements.highsFound,number,Auto - Available,High vulnerabilities found count
+N/A,profile.achievements.mediumsFound,number,Auto - Available,Medium vulnerabilities found count
+N/A,profile.achievements.soloHighs,number,Auto - Available,Solo high vulnerabilities found
+N/A,profile.achievements.soloMediums,number,Auto - Available,Solo medium vulnerabilities found
