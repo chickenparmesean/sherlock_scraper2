@@ -54,52 +54,110 @@ class RealSherlockScraper {
         }
       }
 
-      // Extract earnings data
-      let earnings = '$0';
-      const earningsText = $('body').text();
-      const earningsMatch = earningsText.match(/\$[\d,.]+(K?)\s*(earned|total)/i);
-      if (earningsMatch) {
-        earnings = earningsMatch[0].replace(/\s*(earned|total)/i, '');
-      }
+      // Extract earnings data using proper selector patterns
+      let earnings = '';
+      
+      // Look for earnings in the achievements section
+      $('div').each((i, elem) => {
+        const text = $(elem).text().trim();
+        const earningsMatch = text.match(/\$[\d,.]+(\.?\d+)?K?/);
+        if (earningsMatch && (text.includes('earned') || text.toLowerCase().includes('total'))) {
+          earnings = earningsMatch[0];
+        }
+      });
 
-      // Extract vulnerability stats
+      // Extract vulnerability statistics - use proper DOM parsing
       let highsFound = 0;
       let mediumsFound = 0;
       let soloHighs = 0;
       let soloMediums = 0;
 
-      // Look for High/Medium patterns
-      const statsText = $('body').text();
-      const highMatch = statsText.match(/(\d+)\s*high/i);
-      const mediumMatch = statsText.match(/(\d+)\s*medium/i);
-      const soloHighMatch = statsText.match(/(\d+)\s*solo\s*high/i);
-      const soloMediumMatch = statsText.match(/(\d+)\s*solo\s*medium/i);
-
-      if (highMatch) highsFound = parseInt(highMatch[1]);
-      if (mediumMatch) mediumsFound = parseInt(mediumMatch[1]);
-      if (soloHighMatch) soloHighs = parseInt(soloHighMatch[1]);
-      if (soloMediumMatch) soloMediums = parseInt(soloMediumMatch[1]);
-
-      // Extract rankings
-      let rankings = 'Security researcher with proven expertise';
-      const rankingPatterns = [
-        /(\d+)(?:st|nd|rd|th)\s+place/gi,
-        /(\d+)x\s+first/gi,
-        /(\d+)x\s+second/gi,
-        /(\d+)x\s+third/gi
-      ];
-      
-      const foundRankings = [];
-      rankingPatterns.forEach(pattern => {
-        const matches = statsText.match(pattern);
-        if (matches) {
-          foundRankings.push(...matches);
+      // Find statistics sections by looking for containers with vulnerability data
+      $('div, span').each((i, elem) => {
+        const text = $(elem).text().trim();
+        const $elem = $(elem);
+        
+        // Check for High statistics
+        if (text.toLowerCase().includes('high') && /\d+/.test(text)) {
+          const nextContainer = $elem.parent().parent().find('div, span');
+          
+          nextContainer.each((j, statElem) => {
+            const statText = $(statElem).text().trim();
+            
+            // Look for "X Total" pattern for highs found
+            if (statText.includes('Total') && /^\d+$/.test(statText)) {
+              const siblingText = $(statElem).prev().text() + $(statElem).next().text();
+              if (siblingText.toLowerCase().includes('high')) {
+                highsFound = parseInt(statText);
+              }
+            }
+            
+            // Look for "X Solo" pattern for solo highs
+            if (statText.includes('Solo') && /^\d+$/.test(statText)) {
+              const siblingText = $(statElem).prev().text() + $(statElem).next().text();
+              if (siblingText.toLowerCase().includes('high')) {
+                soloHighs = parseInt(statText);
+              }
+            }
+          });
+        }
+        
+        // Check for Medium statistics
+        if (text.toLowerCase().includes('medium') && /\d+/.test(text)) {
+          const nextContainer = $elem.parent().parent().find('div, span');
+          
+          nextContainer.each((j, statElem) => {
+            const statText = $(statElem).text().trim();
+            
+            // Look for "X Total" pattern for mediums found  
+            if (statText.includes('Total') && /^\d+$/.test(statText)) {
+              const siblingText = $(statElem).prev().text() + $(statElem).next().text();
+              if (siblingText.toLowerCase().includes('medium')) {
+                mediumsFound = parseInt(statText);
+              }
+            }
+            
+            // Look for "X Solo" pattern for solo mediums
+            if (statText.includes('Solo') && /^\d+$/.test(statText)) {
+              const siblingText = $(statElem).prev().text() + $(statElem).next().text();
+              if (siblingText.toLowerCase().includes('medium')) {
+                soloMediums = parseInt(statText);
+              }
+            }
+          });
         }
       });
+
+      // Extract contest rankings using proper pattern matching
+      let rankings = '';
+      const rankingCounts = { first: 0, second: 0, third: 0 };
       
-      if (foundRankings.length > 0) {
-        rankings = foundRankings.join(', ');
+      $('div, span').each((i, elem) => {
+        const text = $(elem).text().trim();
+        
+        // Look for contest ranking patterns like "1st place" or "2x first place"
+        const firstMatch = text.match(/(\d+)x?\s*(1st|first)\s+place/i);
+        const secondMatch = text.match(/(\d+)x?\s*(2nd|second)\s+place/i);  
+        const thirdMatch = text.match(/(\d+)x?\s*(3rd|third)\s+place/i);
+        
+        if (firstMatch) rankingCounts.first += parseInt(firstMatch[1]) || 1;
+        if (secondMatch) rankingCounts.second += parseInt(secondMatch[1]) || 1;
+        if (thirdMatch) rankingCounts.third += parseInt(thirdMatch[1]) || 1;
+      });
+      
+      // Format rankings properly
+      const rankingParts = [];
+      if (rankingCounts.first > 0) {
+        rankingParts.push(`${rankingCounts.first}x first place`);
       }
+      if (rankingCounts.second > 0) {
+        rankingParts.push(`${rankingCounts.second}x second place`);
+      }
+      if (rankingCounts.third > 0) {
+        rankingParts.push(`${rankingCounts.third}x third place`);
+      }
+      
+      rankings = rankingParts.length > 0 ? rankingParts.join(', ') : 'Security researcher';
 
       const profile = {
         name: username,
