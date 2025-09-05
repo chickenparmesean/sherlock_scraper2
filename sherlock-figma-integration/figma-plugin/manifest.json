@@ -1,10 +1,11 @@
 {
   "name": "Auditor Slide Generator",
-  "id": "1234567890123456789",
+  "id": "1545783821063269679",
   "api": "1.0.0",
   "main": "src/code.js",
   "ui": "src/ui.html",
   "capabilities": [],
+  "documentAccess": "dynamic-page",
   "enableProposedApi": false,
   "editorType": [
     "figma",
