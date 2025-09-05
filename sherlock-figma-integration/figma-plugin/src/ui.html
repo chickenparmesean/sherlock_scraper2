@@ -266,6 +266,17 @@
     <div id="templateAnalysis" class="hidden"></div>
   </div>
 
+  <!-- API Configuration -->
+  <div class="section" style="border: 2px solid #0066cc; background-color: #f0f7ff;">
+    <h2>🔑 API Configuration</h2>
+    
+    <div class="input-group">
+      <label for="apiKey">API Key (Required) *</label>
+      <input type="password" id="apiKey" placeholder="Bearer_MySecretKey789" />
+      <div class="field-help">Enter your API key to access the auditor data and logo database</div>
+    </div>
+  </div>
+
   <!-- Auditor & Protocol -->
   <div class="section">
     <h2>👤 Auditor & Protocol</h2>
@@ -408,6 +419,16 @@
     let isGenerating = false;
     let allLogos = [];
     let selectedLogos = [];
+
+    // Helper function to get API key from input field
+    function getApiKey() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) {
+        showStatus('Please enter your API key first!', 'error');
+        throw new Error('API key required');
+      }
+      return apiKey;
+    }
 
     // Message passing to main thread
     function postToMain(message) {
@@ -572,7 +593,7 @@
             console.log(`🖼️ Fetching signature: ${selectedSignature.name}`);
             const apiHost = await getApiHost();
             const signatureResponse = await fetch(`${apiHost}/api/proxy-image?url=${encodeURIComponent(selectedSignature.url)}`, {
-              headers: { 'Authorization': 'Bearer_MySecretKey789' }
+              headers: { 'Authorization': getApiKey() }
             });
             if (signatureResponse.ok) {
               const signatureBytes = new Uint8Array(await signatureResponse.arrayBuffer());
@@ -658,7 +679,7 @@
       const encodedUrl = encodeURIComponent(auditorUrl);
       const response = await fetch(`${apiHost}/api/scrape-profile?url=${encodedUrl}`, {
         method: 'GET',
-        headers: { 'Authorization': 'Bearer_MySecretKey789' }
+        headers: { 'Authorization': getApiKey() }
       });
 
       if (!response.ok) {
@@ -691,7 +712,7 @@
       console.log('🔄 Proxied image URL:', proxiedUrl);
       
       const response = await fetch(proxiedUrl, {
-        headers: { 'Authorization': 'Bearer_MySecretKey789' }
+        headers: { 'Authorization': getApiKey() }
       });
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.status} - ${response.statusText}`);
@@ -718,7 +739,7 @@
           console.log(`🔗 Testing: ${endpoint}/api/logos`);
           const response = await fetch(`${endpoint}/api/logos`, { 
             method: 'GET',
-            headers: { 'Authorization': 'Bearer_MySecretKey789' },
+            headers: { 'Authorization': getApiKey() },
             signal: AbortSignal.timeout(5000)
           });
           console.log(`📡 Response from ${endpoint}:`, response.status, response.ok);
@@ -835,7 +856,7 @@
           method: 'GET',
           headers: {
             'Accept': 'application/json',
-            'Authorization': 'Bearer_MySecretKey789'
+            'Authorization': getApiKey()
           }
         });
         
@@ -968,7 +989,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer_MySecretKey789'
+            'Authorization': getApiKey()
           },
           body: JSON.stringify({
             fileName: fileName,
@@ -1021,7 +1042,7 @@
       try {
         const apiHost = await getApiHost();
         const response = await fetch(`${apiHost}/api/signatures`, {
-          headers: { 'Authorization': 'Bearer_MySecretKey789' }
+          headers: { 'Authorization': getApiKey() }
         });
         
         if (!response.ok) {
