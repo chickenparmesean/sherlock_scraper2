@@ -2,8 +2,35 @@ figma.showUI(__html__, { width: 320, height: 600, themeColors: true });
 
 // Message handler
 figma.ui.onmessage = async (msg) => {
-  if (msg.type === 'generate-slide') {
-    await generateSlideFromData(msg.data);
+  switch (msg.type) {
+    case 'generate-slide':
+      await generateSlideFromData(msg.data);
+      break;
+    case 'save-api-key':
+      try {
+        await figma.clientStorage.setAsync('apiKey', msg.apiKey);
+        figma.ui.postMessage({ 
+          type: 'api-key-saved'
+        });
+      } catch (error) {
+        console.error('Error saving API key:', error);
+      }
+      break;
+    case 'load-api-key':
+      try {
+        const savedApiKey = await figma.clientStorage.getAsync('apiKey');
+        figma.ui.postMessage({ 
+          type: 'api-key-loaded',
+          apiKey: savedApiKey || null
+        });
+      } catch (error) {
+        console.error('Error loading API key:', error);
+        figma.ui.postMessage({ 
+          type: 'api-key-loaded',
+          apiKey: null
+        });
+      }
+      break;
   }
 };
 

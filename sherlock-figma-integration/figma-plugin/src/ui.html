@@ -267,15 +267,21 @@
   </div>
 
   <!-- API Configuration -->
-  <div class="section" style="border: 2px solid #0066cc; background-color: #f0f7ff;">
+  <div class="section" id="apiSection" style="border: 2px solid #0066cc; background-color: #f0f7ff;">
     <h2>🔑 API Configuration</h2>
     
     <div class="input-group">
       <label for="apiKey">API Key (Required) *</label>
-      <input type="password" id="apiKey" placeholder="Bearer_MySecretKey789" />
+      <input type="password" id="apiKey" placeholder="Bearer_MySecretKey789" onkeypress="handleApiKeyEnter(event)" />
       <div class="field-help">Enter your API key to access the auditor data and logo database</div>
     </div>
+    
+    <button class="btn btn-primary" onclick="validateApiKey()" id="enterBtn">🔓 Enter</button>
+    <div id="apiValidationStatus" class="field-help" style="margin-top: 8px;"></div>
   </div>
+
+  <!-- Main Plugin Interface (Hidden until API key validated) -->
+  <div id="mainInterface" class="hidden">
 
   <!-- Auditor & Protocol -->
   <div class="section">
@@ -409,6 +415,8 @@
     <div id="status" class="hidden"></div>
   </div>
 
+  </div> <!-- End mainInterface -->
+
   <!-- Debug info section -->
   <div id="debug-info" style="display: none; margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 6px; font-size: 11px; color: #666;">
   </div>
@@ -419,6 +427,87 @@
     let isGenerating = false;
     let allLogos = [];
     let selectedLogos = [];
+
+    // API Key Management Functions
+    async function saveApiKey(apiKey) {
+      try {
+        parent.postMessage({ 
+          pluginMessage: { 
+            type: 'save-api-key', 
+            apiKey: apiKey 
+          } 
+        }, '*');
+      } catch (error) {
+        console.error('Error saving API key:', error);
+      }
+    }
+
+    async function loadSavedApiKey() {
+      try {
+        parent.postMessage({ 
+          pluginMessage: { 
+            type: 'load-api-key'
+          } 
+        }, '*');
+      } catch (error) {
+        console.error('Error loading API key:', error);
+      }
+    }
+
+    async function validateApiKey() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const enterBtn = document.getElementById('enterBtn');
+      const statusDiv = document.getElementById('apiValidationStatus');
+      
+      if (!apiKey) {
+        statusDiv.innerHTML = '<span style="color: #d73502;">⚠️ Please enter an API key</span>';
+        return;
+      }
+
+      enterBtn.disabled = true;
+      enterBtn.textContent = '🔄 Validating...';
+      statusDiv.innerHTML = '<span style="color: #0066cc;">🔍 Testing API key...</span>';
+
+      try {
+        // Test API key by making a simple request
+        const apiHost = await getApiHost();
+        const response = await fetch(`${apiHost}/api/logos`, {
+          method: 'GET',
+          headers: { 'Authorization': apiKey },
+          signal: AbortSignal.timeout(10000)
+        });
+
+        if (response.ok) {
+          // API key is valid
+          statusDiv.innerHTML = '<span style="color: #155724;">✅ API key validated successfully!</span>';
+          
+          // Save the API key
+          await saveApiKey(apiKey);
+          
+          // Show main interface
+          document.getElementById('mainInterface').classList.remove('hidden');
+          document.getElementById('apiSection').style.display = 'none';
+          
+          // Initialize the plugin
+          await initializePlugin();
+          
+        } else {
+          statusDiv.innerHTML = '<span style="color: #d73502;">❌ Invalid API key - please check and try again</span>';
+        }
+      } catch (error) {
+        console.error('API key validation error:', error);
+        statusDiv.innerHTML = '<span style="color: #d73502;">❌ Failed to validate API key - check your connection</span>';
+      } finally {
+        enterBtn.disabled = false;
+        enterBtn.textContent = '🔓 Enter';
+      }
+    }
+
+    function handleApiKeyEnter(event) {
+      if (event.key === 'Enter') {
+        validateApiKey();
+      }
+    }
 
     // Helper function to get API key from input field
     function getApiKey() {
@@ -435,11 +524,34 @@
       parent.postMessage({ pluginMessage: message }, '*');
     }
 
+    // Initialize plugin on load
+    async function initializePlugin() {
+      console.log('🚀 Initializing plugin...');
+      try {
+        await loadLogos();
+        await loadSignatures();
+        console.log('✅ Plugin initialized successfully');
+      } catch (error) {
+        console.error('❌ Plugin initialization error:', error);
+      }
+    }
+
     // Handle messages from main thread
     window.onmessage = (event) => {
-      const { type, data, message } = event.data.pluginMessage || {};
+      const { type, data, message, apiKey } = event.data.pluginMessage || {};
 
       switch (type) {
+        case 'api-key-loaded':
+          if (apiKey) {
+            console.log('🔑 Saved API key loaded');
+            document.getElementById('apiKey').value = apiKey;
+            // Auto-validate and show interface
+            validateApiKey();
+          }
+          break;
+        case 'api-key-saved':
+          console.log('💾 API key saved successfully');
+          break;
           
         case 'slide-progress':
           handleSlideProgress(data);
@@ -1078,10 +1190,9 @@
       }
     }
 
-    // Initialize logos and signatures when page loads
+    // Initialize plugin when page loads
     document.addEventListener('DOMContentLoaded', () => {
-      loadLogos();
-      loadSignatures();
+      loadSavedApiKey();
     });
 
     console.log('🎨 Auditor Slide Generator UI loaded');
